@@ -1,0 +1,54 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    tools:context="com.example.leegaeul.adpublisher.ADPublisherActivity"
+    android:background="@color/material_blue_grey_950">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/text_receiver_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15pt"
+            android:layout_gravity="center"
+            android:text="name"
+            android:textAlignment="center" />
+        <TextView
+            android:id="@+id/text_receiver_number"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12pt"
+            android:text="000-0000-0000"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="5">
+        <ImageView
+            android:id="@+id/img_ad"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_weight="1">
+
+        <ToggleButton android:id="@+id/btn_speaker_mode" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textOff="한뼘통화" android:textOn="한뼘통화" android:checked="false" android:layout_weight="1"
+            android:clickable="true" />
+        <Button android:id="@+id/btn_call_off" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="통화종료" android:layout_weight="1"/>
+        <Button android:id="@+id/btn_close_activity" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="화면닫기" android:layout_weight="1"/>
+
+    </LinearLayout>
+ </LinearLayout>

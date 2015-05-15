@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ImageContest</string>
+    <string name="title_activity_test">TestAc</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_judge">JudgeActivity</string>
+    <string name="title_activity_gallery_judge">GalleryJudgeActivity</string>
+
+</resources>

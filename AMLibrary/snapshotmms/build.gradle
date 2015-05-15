@@ -1,19 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
 
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/ASL2.0'
-    }
     defaultConfig {
-        applicationId "com.giveangel.amlibrary"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
@@ -30,7 +21,5 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.1.1'
-    compile project(':imagecontest')
-    compile project(':snapshotmms')
-    compile project(':adpublisher')
+    compile project(':sender')
 }

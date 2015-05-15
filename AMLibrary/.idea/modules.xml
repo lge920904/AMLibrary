@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AMLibrary.iml" filepath="$PROJECT_DIR$/AMLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/adpublisher/adpublisher.iml" filepath="$PROJECT_DIR$/adpublisher/adpublisher.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/imagecontest/imagecontest.iml" filepath="$PROJECT_DIR$/imagecontest/imagecontest.iml" />
       <module fileurl="file://$PROJECT_DIR$/sender/sender.iml" filepath="$PROJECT_DIR$/sender/sender.iml" />
+      <module fileurl="file://$PROJECT_DIR$/snapshotmms/snapshotmms.iml" filepath="$PROJECT_DIR$/snapshotmms/snapshotmms.iml" />
     </modules>
   </component>
 </project>
