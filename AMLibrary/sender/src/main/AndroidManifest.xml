@@ -1,0 +1,42 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.giveangel.sender">
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_MMS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.provider.Telephony.SMS_RECEIVED" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <application android:allowBackup="true" android:label="@string/app_name">
+        <service android:name="com.android.mms.transaction.TransactionService" />
+        <receiver android:name=".utils.Receiver" >
+            <intent-filter>
+                <action android:name="com.klinker.android.send_message.SMS_SENT" />
+                <action android:name="com.klinker.android.send_message.DeliveredReceiver" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.klinker.android.send_message.SentReceiver" >
+            <intent-filter>
+                <action android:name="com.klinker.android.send_message.SMS_SENT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.klinker.android.send_message.DeliveredReceiver" >
+            <intent-filter>
+                <action android:name="com.klinker.android.send_message.DeliveredReceiver" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
