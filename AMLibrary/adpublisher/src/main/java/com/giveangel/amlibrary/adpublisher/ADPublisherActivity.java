@@ -1,7 +1,10 @@
 package com.giveangel.amlibrary.adpublisher;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -11,6 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.android.internal.telephony.ITelephony;
+
+import java.lang.reflect.Method;
+
 public class ADPublisherActivity extends Activity {
     private TextView receiverName;
     private TextView receiverNumber;
@@ -19,9 +26,13 @@ public class ADPublisherActivity extends Activity {
     private Button closeActivity;
     private Button callOff;
 
+    private final static String TAG = "ADPublisherActivity";
+    private TelephonyManager telephony;
+
     /**
      * 버튼 이벤트 리스너
      */
+
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -35,6 +46,8 @@ public class ADPublisherActivity extends Activity {
             } else if (id == R.id.btn_close_activity) {
                 /* 현재 액티비티 종료 */
                 closeActivity();
+            } else if (id == R.id.img_ad) {
+                /*광고 이미지 클릭 */
             }
         }
     };
@@ -50,12 +63,19 @@ public class ADPublisherActivity extends Activity {
     }
 
     public void callOff() {
-        try {
-            /* 통화종료 */
-            Toast.makeText(this, "통화종료", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Log.e("통화종료에러", e.getMessage());
+        if (telephony.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK) {
+            try {
+                Class c = Class.forName(telephony.getClass().getName());
+                Method m = c.getDeclaredMethod("getITelephony");
+                m.setAccessible(true);
+                ITelephony telephonyService = (ITelephony) m.invoke(telephony);
+                telephonyService.endCall();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, "FATAL ERROR: could not connect to telephony subsystem");
+            }
         }
+        closeActivity();
     }
 
     public void closeActivity() {
@@ -67,12 +87,12 @@ public class ADPublisherActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adpublisher);
+        telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-
 
         receiverName = (TextView) findViewById(R.id.text_receiver_name);
         receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
@@ -81,8 +101,6 @@ public class ADPublisherActivity extends Activity {
         callOff = (Button) findViewById(R.id.btn_call_off);
         closeActivity = (Button) findViewById(R.id.btn_close_activity);
 
-        receiverName.setOnClickListener(clickListener);
-        receiverNumber.setOnClickListener(clickListener);
         adImage.setOnClickListener(clickListener);
         speakerMode.setOnClickListener(clickListener);
         callOff.setOnClickListener(clickListener);

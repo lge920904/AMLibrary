@@ -2,7 +2,7 @@
  * This file is auto-generated.  DO NOT MODIFY.
  * Original file: frameworks/base/telephony/java/com/android/internal/telephony/ITelephony.aidl
  */
-package com.giveangel.amlibrary.adpublisher.telephony;
+package com.android.internal.telephony;
 
 /**
  * Interface used to interact with the phone.  Mostly this is used by the
