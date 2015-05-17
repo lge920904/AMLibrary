@@ -3,7 +3,6 @@ package com.giveangel.sender;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.android.mms.APN;
@@ -36,8 +35,7 @@ class Sender {
 
     // init
     private void init() {
-        TelephonyManager systemService = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        this.phoneNumber = systemService.getLine1Number();
+        this.phoneNumber = Helper.getPhoneNumber(context);
         if (imgPath.equals("") || imgPath.equals("path"))
             sendImg = BitmapFactory.decodeResource(context.getResources(), R.drawable.default_image);
         else
@@ -89,7 +87,7 @@ class Sender {
         if (phoneNumber != null & (!"".equals(phoneNumber))) {
             String code = phoneNumber.substring(0, 3);
             Log.i("phoneNumber", "code = " + code);
-            if (code.equals("+82")) {
+            if (code.equals("+82") || code.equals("010")) {
                 return true;
             }
         }
