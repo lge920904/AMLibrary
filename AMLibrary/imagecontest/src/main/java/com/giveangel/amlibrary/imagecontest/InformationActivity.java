@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.giveangel.amlibrary.imagecontest.utils.ContestManager;
+import com.giveangel.sender.AMLCostants;
 import com.giveangel.sender.MessageSender;
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +32,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     private static final String CONTEST_MSG_PICKING = "선택하신 사진으로 공모전에 참여하시겠습니까?";
     private static final String BUTTON_POSITIVE = "확인";
     private static final String BUTTON_NEGATIVE = "취소";
+    private static final String CONTEST_MSG_JOIN = "join";
     // UIs
     private Button joinButton;
     private Button judgeButton;
@@ -46,7 +48,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        appName = "";
+        appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         contestManager = new ContestManager(this);
         try {
             new ValidCheckTask().execute().get();
@@ -68,9 +70,10 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         }
     }
 
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
     }
+
     private void settingTemp() {
         Picasso.with(this)
                 .load("http://cafeskthumb.phinf.naver.net/20150515_257/joonggo_safe_1431683533156oH4s1_JPEG/%C0%A5_%B8%DE%C0%CE%B9%E8%B3%CA.jpg?type=w740")
@@ -119,7 +122,11 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     }
 
     private void judgeContest() {
-        startActivity(new Intent(this, JudgeActivity.class));
+        Intent intent = new Intent(this, JudgeActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(AMLCostants.KEY_APP_NAME, appName);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     @Override
@@ -177,7 +184,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
                     public void onClick(DialogInterface dialog, int which) {
                         // 'YES'
                         sender = new MessageSender(InformationActivity.this, "contest");
-                        sender.sendMessage(filePath, "join");
+                        sender.sendMessage(filePath, CONTEST_MSG_JOIN);
                         Toast.makeText(InformationActivity.this,
                                 CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
                     }
@@ -208,9 +215,9 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.contest_information_exit){
+        if (id == R.id.contest_information_exit) {
             finish();
-        }else if(id == R.id.contestinformation_reload){
+        } else if (id == R.id.contestinformation_reload) {
             onResume();
         }
         return super.onOptionsItemSelected(item);

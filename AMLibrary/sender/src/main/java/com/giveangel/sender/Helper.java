@@ -48,7 +48,7 @@ public class Helper {
         } else if (telecomCode == AMLCostants.CODE_SKT) {
             mmsc = "http://omms.nate.com:9082/oma_mms";
             mmsPort = "9093";
-            mmsProxy = "smart.nate.com";
+            mmsProxy = "lteoma.nate.com";
         } else if (telecomCode == AMLCostants.CODE_LGU) {
 
         }
