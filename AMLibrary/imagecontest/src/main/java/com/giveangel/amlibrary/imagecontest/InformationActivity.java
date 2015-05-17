@@ -147,7 +147,6 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         if (requestCode == SELECT_PHOTO) {
-            // mms 전송하여야함
             String filePath = this.getFilePath(data);
             getCheckJoinContest(filePath).show();
         }
@@ -206,10 +205,9 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if(id == R.id.information_exit){
+            finish();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

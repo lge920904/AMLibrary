@@ -75,7 +75,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // 'YES'
                         MessageSender sender = new MessageSender(GalleryJudgeActivity.this, "contest");
-                        sender.sendMessage(rankCount + "등 :" + urlPath);
+                        sender.sendMessage(rankCount + "등:" + urlPath);
                         rankCount++;
                         Toast.makeText(GalleryJudgeActivity.this,
                                 CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
@@ -122,8 +122,8 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.gallery_exit) {
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

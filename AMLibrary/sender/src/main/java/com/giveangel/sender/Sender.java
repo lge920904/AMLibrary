@@ -15,8 +15,8 @@ import com.klinker.android.send_message.Transaction;
  * Created by Kyungman on 2015-05-05.
  */
 class Sender {
-    private static final String SEPARATOR_INIT = "_#";
-    private static final String SEPARATOR_CONTENT = "_*";
+    private static final String SEPARATOR_INIT = "#:";
+    private static final String SEPARATOR_CONTENT = "*:";
     // Context
     private Context context;
     // members
@@ -77,7 +77,7 @@ class Sender {
 
     private Message generateMessage(String separator) {
         // generate message
-        Message sendMessage = new Message(message + separator, phoneNumber);
+        Message sendMessage = new Message(separator + message, phoneNumber);
         sendMessage.setImage(sendImg);   // not necessary for voice or sms messages
         sendMessage.setType(Message.TYPE_SMSMMS);  // could also be Message.TYPE_VOICE
         return sendMessage;
