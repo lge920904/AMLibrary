@@ -1,6 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".InformationActivity">
-    <item android:id="@+id/information_exit" android:title="@string/action_exit"
-        android:orderInCategory="100" app:showAsAction="always" android:icon="@drawable/exit"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".InformationActivity">
+    <item
+        android:id="@+id/contextinformation_reload"
+        android:title="@string/action_reload"
+        android:orderInCategory="99"
+        app:showAsAction="always"
+        android:icon="@android:drawable/stat_notify_sync_noanim" />
+    <item
+        android:id="@+id/contest_information_exit"
+        android:title="@string/action_exit"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:icon="@drawable/abc_ic_clear_mtrl_alpha" />
+
 </menu>

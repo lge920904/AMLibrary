@@ -141,6 +141,10 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
 
     }
 
+    protected void onResume(){
+        super.onResume();
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -205,8 +209,12 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.information_exit){
+
+        if(id == R.id.contest_information_exit){
             finish();
+        }
+        else if(id == R.id.contextinformation_reload){
+            onResume();
         }
         return super.onOptionsItemSelected(item);
     }
