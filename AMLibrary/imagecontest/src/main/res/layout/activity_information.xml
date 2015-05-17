@@ -1,34 +1,77 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".InformationActivity">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:scrollbars="vertical"
+    tools:context=".InformationActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="참여하기"
-        android:id="@+id/contest_join"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="30dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="28dp" />
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:padding="4dp">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="심사바로가기"
-        android:id="@+id/contest_judge"
-        android:layout_alignBottom="@+id/contest_join"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="52dp"
-        android:layout_marginEnd="52dp" />
+        <ImageView
+            android:id="@+id/contestJudgeEventImg"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:adjustViewBounds="true"
+            android:padding="2dp" />
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="2dp">
+
+            <Button
+                android:id="@+id/joinToContestButton"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_button1"
+                android:text="◁공모전참여"
+                android:textSize="8pt"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_gravity="left"/>
+            <Button
+                android:id="@+id/specificInfoButton"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_button1"
+                android:text="상세설명 및 경품"
+                android:textSize="8pt"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_gravity="left"/>
+
+            <Button
+                android:id="@+id/judgeEntryButton"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_button1"
+                android:text="심사참여▷"
+                android:textSize="8pt"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_gravity="left" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/eventSummaryImg"
+            android:layout_width="fill_parent"
+            android:layout_height="1000dp"
+            android:adjustViewBounds="true"
+            android:padding="2dp" />
+
+        <TextView
+            android:id="@+id/eventSummaryText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:textSize="8pt" />
+    </LinearLayout>
+</ScrollView>
+
