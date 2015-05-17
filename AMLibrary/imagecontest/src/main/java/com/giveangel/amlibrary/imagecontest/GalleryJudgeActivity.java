@@ -135,7 +135,6 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                             });
                         }
                     });
-
             return convertView;
         }
     }
