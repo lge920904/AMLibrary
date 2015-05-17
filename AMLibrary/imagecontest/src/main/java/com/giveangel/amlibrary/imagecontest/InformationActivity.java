@@ -68,6 +68,9 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         }
     }
 
+    protected void onResume(){
+        super.onResume();
+    }
     private void settingTemp() {
         Picasso.with(this)
                 .load("http://cafeskthumb.phinf.naver.net/20150515_257/joonggo_safe_1431683533156oH4s1_JPEG/%C0%A5_%B8%DE%C0%CE%B9%E8%B3%CA.jpg?type=w740")
@@ -205,8 +208,10 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.information_exit){
+        if(id == R.id.contest_information_exit){
             finish();
+        }else if(id == R.id.contestinformation_reload){
+            onResume();
         }
         return super.onOptionsItemSelected(item);
     }

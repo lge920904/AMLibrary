@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".InformationActivity">
     <item
-        android:id="@+id/contextinformation_reload"
+        android:id="@+id/contestinformation_reload"
         android:title="@string/action_reload"
         android:orderInCategory="99"
         app:showAsAction="always"
