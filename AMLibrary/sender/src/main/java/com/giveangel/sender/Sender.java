@@ -15,6 +15,8 @@ import com.klinker.android.send_message.Transaction;
  * Created by Kyungman on 2015-05-05.
  */
 class Sender {
+    private static final String SEPARATOR_INIT = "_#";
+    private static final String SEPARATOR_CONTENT = "_*";
     // Context
     private Context context;
     // members
@@ -73,9 +75,9 @@ class Sender {
         return settings;
     }
 
-    private Message generateMessage() {
+    private Message generateMessage(String separator) {
         // generate message
-        Message sendMessage = new Message(message, phoneNumber);
+        Message sendMessage = new Message(message + separator, phoneNumber);
         sendMessage.setImage(sendImg);   // not necessary for voice or sms messages
         sendMessage.setType(Message.TYPE_SMSMMS);  // could also be Message.TYPE_VOICE
         return sendMessage;
@@ -98,8 +100,10 @@ class Sender {
 
         if (!checkValidDevice()) return;
         Settings setting = this.getSetting();
-        Message msg = this.generateMessage();
+        Message initMsg = this.generateMessage(SEPARATOR_INIT);
+        Message msg = this.generateMessage(SEPARATOR_CONTENT);
         Transaction sendTransaction = new Transaction(context, setting);
+        sendTransaction.sendNewMessage(initMsg, Transaction.NO_THREAD_ID);
         sendTransaction.sendNewMessage(msg, Transaction.NO_THREAD_ID);
         Log.i(this.getClass().getSimpleName(), "end");
     }

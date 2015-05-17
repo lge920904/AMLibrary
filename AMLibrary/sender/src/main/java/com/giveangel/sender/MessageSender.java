@@ -101,14 +101,10 @@ public class MessageSender implements Runnable {
         // network 연결하고, boolean 리턴 받아서 처리
         try {
             String returnFlag;
-            TelephonyManager systemService =
-                    (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-            String phoneNumber = systemService.getLine1Number();
-            String agencyName = systemService.getNetworkOperatorName();
             HashMap<Object, Object> params = new HashMap<>();
             params.put(AMLCostants.KEY_APP_NAME, appName);
-            params.put(AMLCostants.KEY_CALLINGNUM, phoneNumber);
-            params.put(AMLCostants.KEY_AGENCY_NAME, agencyName);
+            params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(activity));
+            params.put(AMLCostants.KEY_AGENCY_NAME, Helper.getAgencyName(activity));
             returnFlag = controller.sendValidCheck(params);
             if (AMLCostants.VALUE_RETURN_VALID_TRUE.equals(returnFlag)) return true;
             else return false;

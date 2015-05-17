@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,18 +34,27 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     // variables
     private ContestManager contestManager;
     private MessageSender sender;
+    private String appName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_information);
 
-        joinButton = (Button) findViewById(R.id.contest_join);
-        judgeButton = (Button) findViewById(R.id.contest_judge);
+        this.appName = "";
         contestManager = new ContestManager(this);
+        try {
+            new ValidCheckTask().execute().get();
+            setContentView(R.layout.activity_information);
 
-        joinButton.setOnClickListener(this);
-        judgeButton.setOnClickListener(this);
+            joinButton = (Button) findViewById(R.id.contest_join);
+            judgeButton = (Button) findViewById(R.id.contest_judge);
+
+            joinButton.setOnClickListener(this);
+            judgeButton.setOnClickListener(this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void chooseImage() {
@@ -58,16 +69,11 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        boolean flag;
-        if (v.getId() == joinButton.getId()) {
-            flag = contestManager.checkValidContestJoin();
-            if (!flag) return;
+        int id = v.getId();
+        if (id == joinButton.getId())
             chooseImage();
-        } else if (v.getId() == judgeButton.getId()) {
-            flag = contestManager.checkValidContestJudge();
-            if (!flag) return;
+        else if (id == judgeButton.getId())
             judgeContest();
-        }
     }
 
     @Override
@@ -75,7 +81,6 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK) return;
         if (requestCode == SELECT_PHOTO) {
-            // mms 전송하여야함
             String filePath = this.getFilePath(data);
             getCheckJoinContest(filePath).show();
         }
@@ -140,4 +145,24 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
 
         return super.onOptionsItemSelected(item);
     }
+
+    public class ValidCheckTask extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return contestManager.checkValidApp(appName);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            Log.i("체크", aBoolean + " 음");
+            if (!aBoolean) {
+                Toast.makeText(getApplicationContext(),
+                        "허가된 앱이 아닙니다.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+
 }

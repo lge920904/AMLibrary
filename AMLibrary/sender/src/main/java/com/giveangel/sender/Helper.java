@@ -9,7 +9,7 @@ import com.google.android.mms.APN;
 /**
  * Created by Kyungman on 2015-05-04.
  */
-class Helper {
+public class Helper {
     // APNHelper를 라이브러리에서 제공하나, 제대로된 정보가 넘어오지 않음.
     // 전부 공란으로 넘어옴.
     // 통신사별로 따로 설정해줘야함
@@ -19,10 +19,21 @@ class Helper {
     // 3G 기기에 제공 안할지 물어볼것.
     // 4G기기 APN 정보만 들어가도 되는지.
     private static int getTelecomCode(Context context) {
+        String agencyName = Helper.getAgencyName(context);
+        return AMLCostants.getAgencyCode(agencyName);
+    }
+
+    public static String getAgencyName(Context context) {
         TelephonyManager systemService =
                 (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String agencyName = systemService.getNetworkOperatorName();
-        return AMLCostants.getAgencyCode(agencyName);
+        return agencyName;
+    }
+    public static String getPhoneNumber(Context context) {
+        TelephonyManager systemService =
+                (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String lineNumber = systemService.getLine1Number();
+        return lineNumber;
     }
 
     public static APN getAPNInfo(Context context) {
