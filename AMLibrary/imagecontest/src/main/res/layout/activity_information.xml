@@ -27,7 +27,7 @@
             android:layout_margin="2dp">
 
             <Button
-                android:id="@+id/joinToContestButton"
+                android:id="@+id/contest_join"
                 android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button1"
@@ -48,7 +48,7 @@
                 android:layout_gravity="left"/>
 
             <Button
-                android:id="@+id/judgeEntryButton"
+                android:id="@+id/contest_judge"
                 android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button1"

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
@@ -21,6 +22,7 @@ import com.giveangel.sender.MessageSender;
 public class InformationActivity extends ActionBarActivity implements View.OnClickListener {
     // Constants
     private static final int SELECT_PHOTO = 100;
+    private static final String CONTEST_MSG_EXIT = "허가된 앱이 아닙니다.";
     private static final String CONTEST_MSG_THANK = "응모 감사합니다";
     private static final String CONTEST_MSG_PICKING = "선택하신 사진으로 공모전에 참여하시겠습니까?";
     private static final String BUTTON_POSITIVE = "확인";
@@ -32,18 +34,43 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     // variables
     private ContestManager contestManager;
     private MessageSender sender;
+    private String appName;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_information);
 
-        joinButton = (Button) findViewById(R.id.contest_join);
-        judgeButton = (Button) findViewById(R.id.contest_judge);
+        appName = "";
         contestManager = new ContestManager(this);
+        try {
+            new ValidCheckTask().execute().get();
 
-        joinButton.setOnClickListener(this);
-        judgeButton.setOnClickListener(this);
+            setContentView(R.layout.activity_information);
+
+            joinButton = (Button) findViewById(R.id.contest_join);
+            judgeButton = (Button) findViewById(R.id.contest_judge);
+
+            joinButton.setOnClickListener(this);
+            judgeButton.setOnClickListener(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public class ValidCheckTask extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return contestManager.checkValidApp(appName);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if (!result) {
+                Toast.makeText(getApplicationContext(),
+                        CONTEST_MSG_EXIT, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
 
     public void chooseImage() {
@@ -60,11 +87,11 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     public void onClick(View v) {
         boolean flag;
         if (v.getId() == joinButton.getId()) {
-            flag = contestManager.checkValidContestJoin();
+            flag = contestManager.checkValidContestJoin(appName);
             if (!flag) return;
             chooseImage();
         } else if (v.getId() == judgeButton.getId()) {
-            flag = contestManager.checkValidContestJudge();
+            flag = contestManager.checkValidContestJudge(appName);
             if (!flag) return;
             judgeContest();
         }
