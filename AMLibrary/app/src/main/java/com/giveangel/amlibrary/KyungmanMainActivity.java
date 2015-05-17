@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.giveangel.amlibrary.imagecontest.InformationActivity;
 import com.giveangel.amlibrary.snapshotmms.MessageSender;
+import com.giveangel.sender.AMLCostants;
 
 
 public class KyungmanMainActivity extends Activity {
@@ -38,7 +39,11 @@ public class KyungmanMainActivity extends Activity {
     }
 
     private void openContestActivity() {
-        startActivity(new Intent(this, InformationActivity.class));
+        Intent intent = new Intent(this, InformationActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(AMLCostants.KEY_APP_NAME, "app");
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     private void sendMMS() {

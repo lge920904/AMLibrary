@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.giveangel.amlibrary.imagecontest.utils.ContestManager;
+import com.giveangel.sender.AMLCostants;
 import com.giveangel.sender.MessageSender;
 import com.squareup.picasso.Picasso;
 
@@ -26,6 +27,7 @@ import com.squareup.picasso.Picasso;
 public class InformationActivity extends ActionBarActivity implements View.OnClickListener {
     // Constants
     private static final int SELECT_PHOTO = 100;
+    private static final String CONTEST_MSG_JOIN = "join";
     private static final String CONTEST_MSG_EXIT = "허가된 앱이 아닙니다.";
     private static final String CONTEST_MSG_THANK = "응모 감사합니다";
     private static final String CONTEST_MSG_PICKING = "선택하신 사진으로 공모전에 참여하시겠습니까?";
@@ -46,7 +48,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        appName = "";
+        appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         contestManager = new ContestManager(this);
         try {
             new ValidCheckTask().execute().get();
@@ -116,7 +118,11 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     }
 
     private void judgeContest() {
-        startActivity(new Intent(this, JudgeActivity.class));
+        Intent intent = new Intent(this, JudgeActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(AMLCostants.KEY_APP_NAME, appName);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     @Override
@@ -173,8 +179,8 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // 'YES'
-                        sender = new MessageSender(InformationActivity.this, "contest");
-                        sender.sendMessage(filePath, "join");
+                        sender = new MessageSender(InformationActivity.this, appName);
+                        sender.sendMessage(filePath, CONTEST_MSG_JOIN);
                         Toast.makeText(InformationActivity.this,
                                 CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
                     }
@@ -205,7 +211,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if(id == R.id.information_exit){
+        if (id == R.id.information_exit) {
             finish();
         }
         return super.onOptionsItemSelected(item);

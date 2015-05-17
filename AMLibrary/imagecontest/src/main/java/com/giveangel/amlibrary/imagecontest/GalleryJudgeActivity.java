@@ -41,6 +41,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     private static final String BUTTON_POSITIVE = "확인";
     private static final String BUTTON_NEGATIVE = "취소";
 
+    private String appName;
     private DrawerLayout drawer;
     private GridView gridView;
     private GetImageUrlTask task;
@@ -51,6 +52,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_judge);
+        appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         rankCount = 1;
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         gridView = (GridView) findViewById(R.id.gridView);
@@ -74,7 +76,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // 'YES'
-                        MessageSender sender = new MessageSender(GalleryJudgeActivity.this, "contest");
+                        MessageSender sender = new MessageSender(GalleryJudgeActivity.this, appName);
                         sender.sendMessage(rankCount + "등:" + urlPath);
                         rankCount++;
                         Toast.makeText(GalleryJudgeActivity.this,
