@@ -18,7 +18,6 @@ public class ContestManager {
         this.context = context;
         this.controller = new ContestController(context);
     }
-
     public boolean checkValidApp(String appName) {
         try {
             HashMap<Object, Object> params = new HashMap<>();

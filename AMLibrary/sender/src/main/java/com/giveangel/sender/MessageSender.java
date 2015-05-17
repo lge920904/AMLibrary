@@ -1,8 +1,6 @@
 package com.giveangel.sender;
 
 import android.app.Activity;
-import android.content.Context;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.giveangel.sender.utils.MMSController;
@@ -84,11 +82,8 @@ public class MessageSender implements Runnable {
 
     private void informSentMMS() {
         try {
-            TelephonyManager systemService =
-                    (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-            String phoneNumber = systemService.getLine1Number();
             HashMap<Object, Object> params = new HashMap<>();
-            params.put(AMLCostants.KEY_CALLINGNUM, phoneNumber);
+            params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(activity));
             params.put(AMLCostants.KEY_APP_NAME, appName);
             params.put(AMLCostants.KEY_MMS_COUNT, sentMessageCount);
             controller.informSentMMS(params);

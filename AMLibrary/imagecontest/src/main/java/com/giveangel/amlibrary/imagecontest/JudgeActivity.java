@@ -3,19 +3,25 @@ package com.giveangel.amlibrary.imagecontest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.giveangel.sender.AMLCostants;
+
 
 public class JudgeActivity extends ActionBarActivity implements View.OnClickListener {
     private Button judgeButton;
+    private String appName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_judge);
+        appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
+        Log.i(appName, appName);
         judgeButton = (Button) findViewById(R.id.contest_judge);
         judgeButton.setOnClickListener(this);
     }
@@ -23,7 +29,11 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (v.getId() == judgeButton.getId()) {
-            startActivity(new Intent(this, GalleryJudgeActivity.class));
+            Intent intent = new Intent(this, GalleryJudgeActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(AMLCostants.KEY_APP_NAME, appName);
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
     }
 
