@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button1"
                 android:text="◁공모전참여"
-                android:textSize="8pt"
+                android:textSize="12sp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_gravity="left"/>
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button1"
                 android:text="상세설명 및 경품"
-                android:textSize="8pt"
+                android:textSize="12sp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_gravity="left"/>
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_button1"
                 android:text="심사참여▷"
-                android:textSize="8pt"
+                android:textSize="12sp"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
                 android:layout_gravity="left" />
@@ -71,7 +71,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:textSize="8pt" />
+            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>
 
