@@ -10,54 +10,49 @@
 
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:orientation="vertical"
         android:layout_gravity="center_horizontal"
-        android:padding="4dp">
-
-        <ImageView
-            android:id="@+id/contestJudgeEventImg"
-            android:layout_width="fill_parent"
-            android:layout_height="100dp"
-            android:adjustViewBounds="true"
-            android:padding="2dp" />
+        android:padding="4dp"
+        android:layout_margin="5dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
             android:layout_margin="2dp">
 
             <Button
-                android:id="@+id/contest_join"
+                android:id="@+id/contestJoinButton"
                 android:layout_width="75dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:background="@drawable/round_button1"
-                android:text="◁공모전참여"
+                android:text="공모전참여"
                 android:textSize="12sp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"/>
+                android:layout_margin="1dp"
+                android:layout_weight="1" />
+
             <Button
                 android:id="@+id/specificInfoButton"
                 android:layout_width="120dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:background="@drawable/round_button1"
                 android:text="상세설명 및 경품"
                 android:textSize="12sp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"/>
+                android:layout_margin="1dp"
+                android:layout_weight="2" />
 
             <Button
-                android:id="@+id/contest_judge"
+                android:id="@+id/contestJudgeButton"
                 android:layout_width="75dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:background="@drawable/round_button1"
-                android:text="심사참여▷"
+                android:text="심사참여"
                 android:textSize="12sp"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp" />
+                android:layout_margin="1dp"
+                android:layout_weight="1"/>
         </LinearLayout>
 
         <ImageView
@@ -66,13 +61,6 @@
             android:layout_height="700dp"
             android:adjustViewBounds="true"
             android:padding="2dp" />
-
-        <TextView
-            android:id="@+id/eventSummaryText"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:textSize="12sp" />
     </LinearLayout>
 </ScrollView>
 

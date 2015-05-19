@@ -112,7 +112,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_gallery_judge, menu);
+        getMenuInflater().inflate(R.menu.menu_information, menu);
         return true;
     }
 
@@ -124,10 +124,11 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.gallery_exit) {
+        if (id == R.id.contest_information_exit) {
             finish();
+        } else if (id == R.id.contestinformation_reload) {
+            onResume();
         }
-
         return super.onOptionsItemSelected(item);
     }
 

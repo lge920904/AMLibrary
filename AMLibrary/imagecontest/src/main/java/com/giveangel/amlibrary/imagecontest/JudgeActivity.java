@@ -22,7 +22,7 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
         setContentView(R.layout.activity_judge);
         appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         Log.i(appName, appName);
-        judgeButton = (Button) findViewById(R.id.contest_judge);
+        judgeButton = (Button) findViewById(R.id.doJudgeButton);
         judgeButton.setOnClickListener(this);
     }
 
@@ -40,7 +40,7 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_judge, menu);
+        getMenuInflater().inflate(R.menu.menu_information, menu);
         return true;
     }
 
@@ -52,10 +52,11 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.judge_exit) {
+        if (id == R.id.contest_information_exit) {
             finish();
+        } else if (id == R.id.contestinformation_reload) {
+            onResume();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
