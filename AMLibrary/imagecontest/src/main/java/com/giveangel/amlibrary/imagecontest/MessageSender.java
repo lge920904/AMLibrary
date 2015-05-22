@@ -1,6 +1,9 @@
 package com.giveangel.amlibrary.imagecontest;
 
 import android.app.Activity;
+import android.os.Build;
+import android.util.Log;
+import android.view.View;
 
 /**
  * Created by Kyungman on 2015-05-17.
@@ -10,19 +13,36 @@ public class MessageSender extends com.giveangel.sender.MessageSender {
         super(activity, appName);
     }
 
+    private View view;
+
     @Override
     public void run() {
-        String imgPath = ImageManager.getImage(getActivity());
-        setImgPath(imgPath);
         setMessageType(TYPE_SHOT_SINGLE);
-        super.run();
-        ImageManager.deleteImage(imgPath);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // kitkat and jellybean
+            String imgPath = ImageManager.getImage(view);
+            setImgPath(imgPath);
+            super.run();
+            ImageManager.deleteImage(imgPath);
+        } else {
+            // lollipop
+            super.run();
+            ImageManager.deleteImage(getImgPath());
+        }
     }
 
-    public void sendMessage(String message) {
-        // 스냅샷 촬영 루틴
-        // 이미지를 주지 않은 경우
+    public void sendMessage(View view, String message) {
+        // 이미지 뷰를 줌
+        this.view = view;
         setMessage(message);
-        new Thread(this).start();
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            Log.i(getClass().getSimpleName(), "OS Version > Lollipop");
+            new Thread(this).start();
+        } else {
+            Log.i(getClass().getSimpleName(), "OS Version = Lollipop");
+            String imgPath = ImageManager.getImage(view);
+            setImgPath(imgPath);
+            new Thread(this).start();
+        }
     }
 }

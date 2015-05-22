@@ -47,7 +47,7 @@ public class KyungmanMainActivity extends Activity {
     }
 
     private void sendMMS() {
-        MessageSender sender = new MessageSender(this, "test");
+        MessageSender sender = new MessageSender(KyungmanMainActivity.this, "test");
         sender.sendMessage("test");
     }
 

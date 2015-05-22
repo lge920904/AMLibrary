@@ -32,7 +32,8 @@ public class AMLCostants {
 
     // AGENCIES
     public static enum AGENCY {
-        KT_4G("olleh", CODE_KT_4G), KT("KT", CODE_KT_4G), SKT_4G("SKTelecom", CODE_SKT);
+        KT_4G("olleh", CODE_KT_4G), KT("KT", CODE_KT_4G),
+        SKT_4G("SKTelecom", CODE_SKT), LG_4G("LG U+", CODE_LGU), LG("LG", CODE_LGU);
         private String name;
         private int agencyCode;
 

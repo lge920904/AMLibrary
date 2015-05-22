@@ -27,6 +27,7 @@ public class Helper {
         TelephonyManager systemService =
                 (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String agencyName = systemService.getNetworkOperatorName();
+        if(agencyName.substring(0,2).equals("LG")) return "LG";
         return agencyName;
     }
     public static String getPhoneNumber(Context context) {
@@ -50,7 +51,8 @@ public class Helper {
             mmsPort = "9093";
             mmsProxy = "lteoma.nate.com";
         } else if (telecomCode == AMLCostants.CODE_LGU) {
-
+            mmsc = "http://omammsc.uplus.co.kr:9084";
+            mmsPort = "9084";
         }
         APN apn = new APN();
         apn.MMSCenterUrl = mmsc;

@@ -64,11 +64,11 @@ public class MessageSender implements Runnable {
         if (checkAppValidation()) {
             // 전송
             if (messageType == TYPE_SHOT_SINGLE) {
-                Sender sender = new Sender(activity.getApplicationContext(), imgPath, message);
+                Sender sender = new Sender(activity, imgPath, message);
                 sender.run();
                 this.sentMessageCount = 1;
             } else if (messageType == TYPE_SHOT_MULTIPLE) {
-                Sender sender = new Sender(activity.getApplicationContext(), "", "");
+                Sender sender = new Sender(activity, "", "");
                 for (int i = 0; i < messages.size(); i++) {
                     sender.init(imgPaths.get(i), messages.get(i));
                     sender.run();

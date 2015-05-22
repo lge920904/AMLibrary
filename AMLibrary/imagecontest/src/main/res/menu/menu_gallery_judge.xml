@@ -2,6 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.giveangel.amlibrary.imagecontest.GalleryJudgeActivity">
-    <item android:id="@+id/gallery_exit" android:title="@string/action_exit"
-        android:orderInCategory="100" app:showAsAction="always" android:icon="@drawable/exit"/>
+    <item
+        android:id="@+id/gallery_exit"
+        android:icon="@drawable/abc_ic_clear_mtrl_alpha"
+        android:orderInCategory="100"
+        android:title="@string/action_exit"
+        app:showAsAction="always" />
 </menu>

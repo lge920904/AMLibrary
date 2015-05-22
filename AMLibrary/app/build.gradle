@@ -32,5 +32,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile project(':imagecontest')
     compile project(':snapshotmms')
-    compile project(':adpublisher')
 }

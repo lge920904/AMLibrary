@@ -40,6 +40,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
             "확인 버튼을 누르시면 mms가 한건 발송되며 추가비용은 발생하지 않습니다. \n심사를 완료하시면 로또응모권이 지급됩니다.";
     private static final String BUTTON_POSITIVE = "확인";
     private static final String BUTTON_NEGATIVE = "취소";
+    private static final String CONTEST_MSG_WAIT = "이전 응모를 처리중입니다.\n잠시 후 시도해주세요.";
 
     private String appName;
     private DrawerLayout drawer;
@@ -47,13 +48,20 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     private GetImageUrlTask task;
     protected ArrayList<String> resultList;
     private int rankCount;
+    private MessageSender sender;
+    private GridViewAdapter adapter;
+    private ContestJudgeManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_judge);
+        Log.e(this.getClass().getSimpleName(), "create logcat");
+
         appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         rankCount = 1;
+        manager = new ContestJudgeManager();
+
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         gridView = (GridView) findViewById(R.id.gridView);
         Log.e(this.getClass().getSimpleName(), "create logcat");
@@ -61,14 +69,12 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                MessageSender sender = new MessageSender(GalleryJudgeActivity.this, "contest");
-//                sender.sendMessage(resultList.get(i));
-                sendContestRankDialog(resultList.get(i)).show();
+                sendContestRankDialog(view, resultList.get(i)).show();
             }
         });
     }
 
-    private AlertDialog sendContestRankDialog(final String urlPath) {
+    private AlertDialog sendContestRankDialog(final View view, final String urlPath) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(CONTEST_MSG_PICKING_FRONT + rankCount + CONTEST_MSG_PICKING_BACK)
                 .setCancelable(false).setPositiveButton(BUTTON_POSITIVE,
@@ -76,11 +82,14 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // 'YES'
-                        MessageSender sender = new MessageSender(GalleryJudgeActivity.this, appName);
-                        sender.sendMessage(rankCount + "등:" + urlPath);
-                        rankCount++;
-                        Toast.makeText(GalleryJudgeActivity.this,
-                                CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
+                        //MessageSender sender = new MessageSender(GalleryJudgeActivity.this, appName);
+                        if (manager.checkValidJudge()) {
+                            sender.sendMessage(view, rankCount + "등:" + urlPath);
+                            changeDataset(urlPath);
+                            rankCount++;
+                            Toast.makeText(GalleryJudgeActivity.this,
+                                    CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }).setNegativeButton(BUTTON_NEGATIVE,
                 new DialogInterface.OnClickListener() {
@@ -94,6 +103,11 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         return alert;
     }
 
+    private void changeDataset(String path) {
+        resultList.remove(path);
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -101,18 +115,40 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     }
 
     private void init() {
+        sender = new MessageSender(GalleryJudgeActivity.this, appName);
+        Log.i("init", "init");
         if (task == null) {
             task = new GetImageUrlTask();
             task.execute();
         } else {
+        }
+    }
 
+    class ContestJudgeManager {
+        private long prevTimeValue;
+
+        public ContestJudgeManager() {
+            prevTimeValue = 0;
+        }
+
+        public boolean checkValidJudge() {
+            long currentTimeValue = System.currentTimeMillis();
+            Log.i("timeCheck", prevTimeValue + " current : " + currentTimeValue);
+            if (currentTimeValue - prevTimeValue > 3000) {
+                prevTimeValue = currentTimeValue;
+                return true;
+            } else {
+                Toast.makeText(GalleryJudgeActivity.this,
+                        CONTEST_MSG_WAIT, Toast.LENGTH_SHORT).show();
+                return false;
+            }
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_information, menu);
+        getMenuInflater().inflate(R.menu.menu_gallery_judge, menu);
         return true;
     }
 
@@ -122,12 +158,8 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.contest_information_exit) {
+        if (id == R.id.gallery_exit) {
             finish();
-        } else if (id == R.id.contestinformation_reload) {
-            onResume();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -152,7 +184,8 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            gridView.setAdapter(new GridViewAdapter());
+            adapter = new GridViewAdapter();
+            gridView.setAdapter(adapter);
         }
     }
 

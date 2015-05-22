@@ -1,6 +1,6 @@
 package com.giveangel.sender;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -17,7 +17,7 @@ class Sender {
     private static final String SEPARATOR_INIT = "#:";
     private static final String SEPARATOR_CONTENT = "*:";
     // Context
-    private Context context;
+    private Activity context;
     // members
     private String imgPath;
     private String message;
@@ -26,7 +26,7 @@ class Sender {
     // variables
     private Bitmap sendImg;
 
-    public Sender(Context context, String imgPath, String message) {
+    public Sender(Activity context, String imgPath, String message) {
         this.context = context;
         this.imgPath = imgPath;
         this.message = message;
