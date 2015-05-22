@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Scroller;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +48,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         super.onCreate(savedInstanceState);
 
         appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
-        contestManager = new ContestManager(this);
+        contestManager = new ContestManager(this, appName);
         try {
             new ValidCheckTask().execute().get();
             setContentView(R.layout.activity_information);
@@ -74,16 +73,16 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
 
     private void settingTemp() {
 
-          Picasso.with(this)
+        Picasso.with(this)
                 .load("http://cafeptthumb4.phinf.naver.net/20150515_158/joonggo_safe_14316834508065pKXS_JPEG/%C0%A5_%BB%F3%BC%BC.jpg?type=w740")
                 .fit().centerCrop()
                 .into(eventSummaryImg);
-      }
+    }
 
     public class ValidCheckTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... voids) {
-            return contestManager.checkValidApp(appName);
+            return contestManager.checkValidApp();
         }
 
         @Override
@@ -94,6 +93,29 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
                         CONTEST_MSG_EXIT, Toast.LENGTH_SHORT).show();
                 finish();
             }
+        }
+    }
+
+    class GetInformation extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                String url = contestManager.getInformationURL();
+                return url;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String url) {
+            super.onPostExecute(url);
+            if (url == null) return;
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
         }
     }
 
@@ -130,7 +152,11 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     }
 
     private void openWebPage() {
-
+        try {
+            new GetInformation().execute().get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

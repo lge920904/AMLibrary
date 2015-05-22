@@ -22,12 +22,26 @@ public class ContestController extends Controller {
     public ContestController(Context context) {
         super(context);
     }
+
     public String sendValidCheck(HashMap<Object, Object> params)
             throws JSONException,
             IOException {
         // TODO Auto-generated method stub
         MMSController controller = new MMSController(getContext());
         return controller.sendValidCheck(params);
+    }
+
+    public String getInformationUrl(HashMap<Object, Object> params) throws JSONException,
+            IOException {
+        String functionURL = URL_CONTEST + FUNCTION_LIST.information_url.getUrl();
+        String url = this.getUrl(functionURL, params);
+        String jsonValue = getStringFromUrl(url);
+        HashMap<Object, Object> map = fromJSON(
+                new TypeReference<HashMap<Object, Object>>() {
+                }, jsonValue);
+        if (map != null)
+            return map.get("url").toString();
+        return "";
     }
 
     public ArrayList<String> getImageList(HashMap<Object, Object> params)
@@ -57,7 +71,7 @@ public class ContestController extends Controller {
     }
 
     public static enum FUNCTION_LIST {
-        vote_img("vote_img.asp"), valid_check("mms_stop.asp");
+        vote_img("vote_img.asp"), valid_check("mms_stop.asp"), information_url("detail.asp");
         private String url;
 
         private FUNCTION_LIST(String url) {

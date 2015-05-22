@@ -31,4 +31,12 @@
         android:layout_alignParentStart="true"
         android:layout_marginLeft="53dp"
         android:layout_marginStart="53dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="timer_sendmms"
+        android:id="@+id/timer_sendmms"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

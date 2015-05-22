@@ -13,12 +13,15 @@ import java.util.HashMap;
 public class ContestManager {
     private Context context;
     private ContestController controller;
+    private String appName;
 
-    public ContestManager(Context context) {
+    public ContestManager(Context context, String appName) {
         this.context = context;
+        this.appName = appName;
         this.controller = new ContestController(context);
     }
-    public boolean checkValidApp(String appName) {
+
+    public boolean checkValidApp() {
         try {
             HashMap<Object, Object> params = new HashMap<>();
             params.put(AMLCostants.KEY_APP_NAME, appName);
@@ -30,6 +33,21 @@ public class ContestManager {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public String getInformationURL() {
+        try {
+            HashMap<Object, Object> params = new HashMap<>();
+            params.put(AMLCostants.KEY_APP_NAME, appName);
+            params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(context));
+            params.put(AMLCostants.KEY_AGENCY_NAME, Helper.getAgencyName(context));
+            String url = controller.getInformationUrl(params);
+            if ("".equals(url)) return null;
+            return url;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public boolean checkValidContestJoin(String appName) {
