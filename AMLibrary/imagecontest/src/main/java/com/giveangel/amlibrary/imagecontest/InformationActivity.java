@@ -55,11 +55,11 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
             eventSummaryImg = (ImageView) findViewById(R.id.eventSummaryImg); // 이벤트 설명 이미지.
             joinButton = (Button) findViewById(R.id.contestJoinButton);
             judgeButton = (Button) findViewById(R.id.contestJudgeButton);
-            specificInfoButton = (TextView) findViewById(R.id.specificInfoText); // 상세설명
+            specificInfoText = (TextView) findViewById(R.id.specificInfoText); // 상세설명
 
             joinButton.setOnClickListener(this);
             judgeButton.setOnClickListener(this);
-            specificInfoButton.setOnClickListener(this);
+            specificInfoText.setOnClickListener(this);
 
             settingTemp();
         } catch (Exception e) {
@@ -144,7 +144,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
             flag = contestManager.checkValidContestJudge(appName);
             if (!flag) return;
             judgeContest();
-        } else if (v.getId() == specificInfoButton.getId()) {
+        } else if (v.getId() == specificInfoText.getId()) {
             flag = contestManager.checkValidContestJudge(appName);
             if (!flag) return;
             openWebPage();
