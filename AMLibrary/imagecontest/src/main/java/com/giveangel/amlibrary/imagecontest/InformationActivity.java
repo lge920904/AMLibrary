@@ -35,7 +35,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     // UIs
     private Button joinButton;
     private Button judgeButton;
-    private Button specificInfoButton;
+    private TextView specificInfoText;
     private ImageView contestJudgeEventImg;
     private ImageView eventSummaryImg;
     private TextView eventSummaryText;
@@ -55,7 +55,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
             eventSummaryImg = (ImageView) findViewById(R.id.eventSummaryImg); // 이벤트 설명 이미지.
             joinButton = (Button) findViewById(R.id.contestJoinButton);
             judgeButton = (Button) findViewById(R.id.contestJudgeButton);
-            specificInfoButton = (Button) findViewById(R.id.specificInfoButton); // 상세설명
+            specificInfoButton = (TextView) findViewById(R.id.specificInfoText); // 상세설명
 
             joinButton.setOnClickListener(this);
             judgeButton.setOnClickListener(this);

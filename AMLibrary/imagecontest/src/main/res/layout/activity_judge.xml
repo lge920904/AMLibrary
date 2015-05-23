@@ -21,7 +21,6 @@
             android:id="@+id/doJudgeButton"
             android:layout_width="fill_parent"
             android:layout_height="40dp"
-            android:background="@drawable/round_button1"
             android:text="공모전 심사"
             android:textSize="18sp"
             android:layout_margin="1dp"
