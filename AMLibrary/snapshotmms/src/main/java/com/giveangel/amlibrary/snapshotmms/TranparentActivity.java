@@ -16,7 +16,7 @@ public class TranparentActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tranparent);
 
-
+//        getWindow().setBackgroundDrawable(new ColorDrawable(0));
         MessageSender sender;
         sender = new MessageSender(TranparentActivity.this, "test");
         sender.sendMessage("test");

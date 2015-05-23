@@ -137,15 +137,15 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     public void onClick(View v) {
         boolean flag;
         if (v.getId() == joinButton.getId()) {
-            flag = contestManager.checkValidContestJoin(appName);
+            flag = contestManager.checkValidContestJoin();
             if (!flag) return;
             chooseImage();
         } else if (v.getId() == judgeButton.getId()) {
-            flag = contestManager.checkValidContestJudge(appName);
+            flag = contestManager.checkValidContestJudge();
             if (!flag) return;
             judgeContest();
         } else if (v.getId() == specificInfoText.getId()) {
-            flag = contestManager.checkValidContestJudge(appName);
+            flag = contestManager.checkValidContestJudge();
             if (!flag) return;
             openWebPage();
         }

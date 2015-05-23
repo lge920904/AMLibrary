@@ -13,7 +13,7 @@
         </activity>
         <activity
             android:name=".TranparentActivity"
-            android:label="@string/title_activity_tranparent"  android:theme="@android:style/Theme.Translucent">
+            android:label="@string/title_activity_tranparent">
         </activity>
     </application>
 

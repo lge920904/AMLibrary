@@ -18,6 +18,7 @@ class SnapshotManager {
 
     public static String shootingSnapshot(Activity activity) {
         try {
+//            View snapshotView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
             View snapshotView = activity.getWindow().getDecorView();
             snapshotView.setDrawingCacheEnabled(true);
             Log.i(SnapshotManager.class.getSimpleName(), snapshotView.getWidth() + " x " + snapshotView.getHeight());

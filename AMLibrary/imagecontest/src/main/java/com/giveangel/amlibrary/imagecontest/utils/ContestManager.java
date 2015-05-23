@@ -5,6 +5,7 @@ import android.content.Context;
 import com.giveangel.sender.AMLCostants;
 import com.giveangel.sender.Helper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -50,12 +51,37 @@ public class ContestManager {
         return null;
     }
 
-    public boolean checkValidContestJoin(String appName) {
+    public ArrayList<String> getLottoNumberList() {
+        try {
+            HashMap<Object, Object> params = new HashMap<>();
+            params.put(AMLCostants.KEY_APP_NAME, appName);
+            params.put(AMLCostants.KEY_AGENCY_NAME, Helper.getAgencyName(context));
+            params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(context));
+            return controller.getLottoNumberList(params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public ArrayList<String> getImageList() {
+        try {
+            HashMap<Object, Object> params = new HashMap<>();
+            params.put(AMLCostants.KEY_APP_NAME, "test");
+            params.put(AMLCostants.KEY_AGENCY_NAME, Helper.getAgencyName(context));
+            params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(context));
+            return controller.getImageList(params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public boolean checkValidContestJoin() {
         return true;
     }
 
-    public boolean checkValidContestJudge(String appName) {
+    public boolean checkValidContestJudge() {
         return true;
     }
-
 }

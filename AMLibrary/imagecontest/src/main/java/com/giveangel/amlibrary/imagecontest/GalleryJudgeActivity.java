@@ -23,14 +23,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.giveangel.amlibrary.imagecontest.utils.ContestController;
+import com.giveangel.amlibrary.imagecontest.utils.ContestManager;
 import com.giveangel.sender.AMLCostants;
-import com.giveangel.sender.Helper;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class GalleryJudgeActivity extends ActionBarActivity {
@@ -51,20 +51,21 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     private MessageSender sender;
     private GridViewAdapter adapter;
     private ContestJudgeManager manager;
+    private ContestManager contestManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery_judge);
-        Log.e(this.getClass().getSimpleName(), "create logcat");
+        Log.e(this.getClass().getSimpleName(), "onCreate");
 
-        appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         rankCount = 1;
+        appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         manager = new ContestJudgeManager();
+        contestManager = new ContestManager(getApplicationContext(), appName);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         gridView = (GridView) findViewById(R.id.gridView);
-        Log.e(this.getClass().getSimpleName(), "create logcat");
         drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,6 +87,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                         if (manager.checkValidJudge()) {
                             sender.sendMessage(view, rankCount + "등:" + urlPath);
                             changeDataset(urlPath);
+                            setLottoTask();
                             rankCount++;
                             Toast.makeText(GalleryJudgeActivity.this,
                                     CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
@@ -101,6 +103,19 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                 });
         AlertDialog alert = dialogBuilder.create();
         return alert;
+    }
+
+    private void setLottoTask() {
+        final TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                GetLottoNumberTask lottoTask = new GetLottoNumberTask();
+                lottoTask.execute();
+                this.cancel();
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(timerTask, 1500);
     }
 
     private void changeDataset(String path) {
@@ -168,16 +183,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                ContestController controller = new ContestController(GalleryJudgeActivity.this);
-                HashMap<Object, Object> params = new HashMap<>();
-                params.put(AMLCostants.KEY_APP_NAME, "test");
-                params.put(AMLCostants.KEY_AGENCY_NAME, Helper.getAgencyName(getApplicationContext()));
-                params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(getApplicationContext()));
-                resultList = controller.getImageList(params);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            resultList = contestManager.getImageList();
             return null;
         }
 
@@ -186,6 +192,20 @@ public class GalleryJudgeActivity extends ActionBarActivity {
             super.onPostExecute(aVoid);
             adapter = new GridViewAdapter();
             gridView.setAdapter(adapter);
+        }
+    }
+
+    class GetLottoNumberTask extends AsyncTask<Void, Void, ArrayList<String>> {
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... voids) {
+            return contestManager.getLottoNumberList();
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> list) {
+            super.onPostExecute(list);
+            // notify
         }
     }
 

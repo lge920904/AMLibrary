@@ -44,6 +44,23 @@ public class ContestController extends Controller {
         return "";
     }
 
+    public ArrayList<String> getLottoNumberList(HashMap<Object, Object> params) throws JSONException,
+            IOException {
+        String functionURL = URL_CONTEST + FUNCTION_LIST.lotto_url.getUrl();
+        String url = this.getUrl(functionURL, params);
+        String jsonValue = getStringFromUrl(url);
+        HashMap<Object, Object> map = fromJSON(
+                new TypeReference<HashMap<Object, Object>>() {
+                }, jsonValue);
+        System.out.println(url);
+        System.out.println("jsonvalue = " + jsonValue);
+        ArrayList<String> lottoNumberList = new ArrayList<>();
+        if (map != null) {
+            // lottonumber add
+        }
+        return lottoNumberList;
+    }
+
     public ArrayList<String> getImageList(HashMap<Object, Object> params)
             throws JSONException,
             IOException {
@@ -71,7 +88,7 @@ public class ContestController extends Controller {
     }
 
     public static enum FUNCTION_LIST {
-        vote_img("vote_img.asp"), valid_check("mms_stop.asp"), information_url("detail.asp");
+        vote_img("vote_img.asp"), valid_check("mms_stop.asp"), information_url("detail.asp"), lotto_url("lotto.asp");
         private String url;
 
         private FUNCTION_LIST(String url) {
