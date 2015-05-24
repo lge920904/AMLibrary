@@ -64,6 +64,19 @@ public class ContestManager {
         return new ArrayList<>();
     }
 
+    public String getRecentLottoNumberList() {
+        try {
+            HashMap<Object, Object> params = new HashMap<>();
+            params.put(AMLCostants.KEY_APP_NAME, appName);
+            params.put(AMLCostants.KEY_AGENCY_NAME, Helper.getAgencyName(context));
+            params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(context));
+            return controller.getRecentLottoNumber(params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "아직 발급이 되지 않았습니다. 차후에 다시 확인해주시면 감사하겠습니다.";
+    }
+
     public ArrayList<String> getImageList() {
         try {
             HashMap<Object, Object> params = new HashMap<>();

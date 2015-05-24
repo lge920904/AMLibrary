@@ -32,6 +32,10 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     private static final String BUTTON_POSITIVE = "확인";
     private static final String BUTTON_NEGATIVE = "취소";
     private static final String CONTEST_MSG_JOIN = "join";
+    private static final String CONTEST_MSG_CONFIRM_EXIT = "심사를 완료하시면 약 1천만원의 경품의 \n" +
+            "응모가 가능한 경품권을 받을 수 있습니다. \n정말 닫으시겠습니까? ";
+    private static final String BUTTON_EXIT = "닫기";
+    private static final String BUTTON_CANCEL = "취소";
     // UIs
     private Button joinButton;
     private Button judgeButton;
@@ -43,12 +47,14 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
     private ContestManager contestManager;
     private MessageSender sender;
     private String appName;
+    private BackPressCloseHandler backPressCloseHandler;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         contestManager = new ContestManager(this, appName);
+        backPressCloseHandler = new BackPressCloseHandler(this);
         try {
             new ValidCheckTask().execute().get();
             setContentView(R.layout.activity_information);
@@ -60,11 +66,35 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
             joinButton.setOnClickListener(this);
             judgeButton.setOnClickListener(this);
             specificInfoText.setOnClickListener(this);
-
             settingTemp();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private AlertDialog lottoNumberAlertDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage(CONTEST_MSG_CONFIRM_EXIT)
+                .setCancelable(false).setPositiveButton(BUTTON_EXIT,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 'YES'
+                        finish();
+                    }
+                }).setNegativeButton(BUTTON_CANCEL, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 'NO'
+            }
+        });
+        AlertDialog alert = dialogBuilder.create();
+        return alert;
+    }
+
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
     }
 
     protected void onResume() {
@@ -221,10 +251,9 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.contest_information_exit) {
-            finish();
+            lottoNumberAlertDialog().show();
         } else if (id == R.id.contestinformation_reload) {
             onResume();
         }

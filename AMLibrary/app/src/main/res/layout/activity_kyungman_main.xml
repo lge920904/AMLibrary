@@ -12,28 +12,31 @@
         android:id="@+id/mms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/contest"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/timer_sendmms"
-        android:layout_toRightOf="@+id/timer_sendmms"
         android:gravity="bottom"
-        android:text="SENDMMS" />
+        android:text="SENDMMS"
+        android:layout_alignTop="@+id/contest"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="80dp"
+        android:layout_marginEnd="80dp" />
 
     <Button
         android:id="@+id/contest"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Contest"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/timer_sendmms"
-        android:layout_toStartOf="@+id/timer_sendmms"
-        android:text="Contest" />
+        android:layout_toLeftOf="@+id/mms"
+        android:layout_toStartOf="@+id/mms" />
 
-    <Button
-        android:id="@+id/timer_sendmms"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/mms"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="AMLibrary Demo"
+        android:id="@+id/textView"
+        android:layout_above="@+id/mms"
         android:layout_centerHorizontal="true"
-        android:text="timer_sendmms" />
+        android:layout_marginBottom="54dp" />
 
 </RelativeLayout>

@@ -1,5 +1,7 @@
 package com.giveangel.amlibrary.imagecontest;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -16,10 +18,17 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
     private Button judgeButton;
     private String appName;
 
+    private static final String CONTEST_MSG_CONFIRM_EXIT = "심사를 완료하시면 약 1천만원의 경품의 \n" +
+            "응모가 가능한 경품권을 받을 수 있습니다. \n정말 닫으시겠습니까? ";
+    private static final String BUTTON_EXIT = "닫기";
+    private static final String BUTTON_CANCEL = "취소";
+    private BackPressCloseHandler backPressCloseHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_judge);
+        backPressCloseHandler = new BackPressCloseHandler(this);
         appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         Log.i(appName, appName);
         judgeButton = (Button) findViewById(R.id.doJudgeButton);
@@ -34,7 +43,13 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
             bundle.putString(AMLCostants.KEY_APP_NAME, appName);
             intent.putExtras(bundle);
             startActivity(intent);
+            finish();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
     }
 
     @Override
@@ -53,10 +68,32 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.contest_information_exit) {
-            finish();
+            lottoNumberAlertDialog().show();
         } else if (id == R.id.contestinformation_reload) {
             onResume();
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    private AlertDialog lottoNumberAlertDialog() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage(CONTEST_MSG_CONFIRM_EXIT)
+                .setCancelable(false).setPositiveButton(BUTTON_EXIT,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 'YES'
+                        finish();
+                    }
+                }).setNegativeButton(BUTTON_CANCEL, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 'NO'
+            }
+        });
+        AlertDialog alert = dialogBuilder.create();
+        return alert;
+    }
+
 }

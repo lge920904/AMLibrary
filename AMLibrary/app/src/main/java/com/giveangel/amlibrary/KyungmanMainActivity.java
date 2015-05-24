@@ -11,7 +11,6 @@ import android.widget.Button;
 
 import com.giveangel.amlibrary.imagecontest.InformationActivity;
 import com.giveangel.amlibrary.snapshotmms.MessageSender;
-import com.giveangel.amlibrary.snapshotmms.TranparentActivity;
 import com.giveangel.sender.AMLCostants;
 
 import java.util.Timer;
@@ -29,7 +28,6 @@ public class KyungmanMainActivity extends Activity {
         setContentView(R.layout.activity_kyungman_main);
         Button mmsButton = (Button) findViewById(R.id.mms);
         Button contestButton = (Button) findViewById(R.id.contest);
-        Button timerMmsButton = (Button) findViewById(R.id.timer_sendmms);
 
         timerTask = new TimerTask() {
             @Override
@@ -50,13 +48,6 @@ public class KyungmanMainActivity extends Activity {
                 openContestActivity();
             }
         });
-        timerMmsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timer = new Timer();
-                timer.schedule(timerTask, 3000);
-            }
-        });
     }
 
     private void openContestActivity() {
@@ -73,9 +64,6 @@ public class KyungmanMainActivity extends Activity {
     }
 
     private void sendTimerMMS() {
-//        Intent intent = new Intent(this, TranslucentActivity.class);
-        Intent intent = new Intent(this, TranparentActivity.class);
-        startActivity(intent);
     }
 
     @Override

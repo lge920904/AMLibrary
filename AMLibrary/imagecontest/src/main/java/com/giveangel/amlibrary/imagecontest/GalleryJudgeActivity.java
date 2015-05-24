@@ -29,8 +29,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class GalleryJudgeActivity extends ActionBarActivity {
@@ -38,8 +36,11 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     private static final String CONTEST_MSG_PICKING_FRONT = "위사진을 ";
     private static final String CONTEST_MSG_PICKING_BACK = "등으로 뽑으시겠습니까? \n" +
             "확인 버튼을 누르시면 mms가 한건 발송되며 추가비용은 발생하지 않습니다. \n심사를 완료하시면 로또응모권이 지급됩니다.";
+    private static final String CONTEST_MSG_LOTTO_FRONT = "심사해주셔서 감사합니다. \n귀하의 응모권 번호는 \n";
+    private static final String CONTEST_MSG_LOTTO_BACK = " 이며 추첨은 다음 로또회차를 기준으로 추첨이 됩니다.\n감사합니다.";
     private static final String BUTTON_POSITIVE = "확인";
     private static final String BUTTON_NEGATIVE = "취소";
+    private static final String BUTTON_EXIT = "닫기";
     private static final String CONTEST_MSG_WAIT = "이전 응모를 처리중입니다.\n잠시 후 시도해주세요.";
 
     private String appName;
@@ -52,6 +53,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     private GridViewAdapter adapter;
     private ContestJudgeManager manager;
     private ContestManager contestManager;
+    private BackPressCloseHandler backPressCloseHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         appName = getIntent().getExtras().getString(AMLCostants.KEY_APP_NAME);
         manager = new ContestJudgeManager();
         contestManager = new ContestManager(getApplicationContext(), appName);
+        backPressCloseHandler = new BackPressCloseHandler(this);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         gridView = (GridView) findViewById(R.id.gridView);
@@ -73,6 +76,11 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                 sendContestRankDialog(view, resultList.get(i)).show();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
     }
 
     private AlertDialog sendContestRankDialog(final View view, final String urlPath) {
@@ -87,7 +95,6 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                         if (manager.checkValidJudge()) {
                             sender.sendMessage(view, rankCount + "등:" + urlPath);
                             changeDataset(urlPath);
-                            setLottoTask();
                             rankCount++;
                             Toast.makeText(GalleryJudgeActivity.this,
                                     CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
@@ -105,17 +112,19 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         return alert;
     }
 
-    private void setLottoTask() {
-        final TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                GetLottoNumberTask lottoTask = new GetLottoNumberTask();
-                lottoTask.execute();
-                this.cancel();
-            }
-        };
-        Timer timer = new Timer();
-        timer.schedule(timerTask, 1500);
+    private AlertDialog lottoNumberAlertDialog(String lottoNumber) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage(CONTEST_MSG_LOTTO_FRONT + lottoNumber + CONTEST_MSG_LOTTO_BACK)
+                .setCancelable(false).setPositiveButton(BUTTON_EXIT,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 'YES'
+                        finish();
+                    }
+                });
+        AlertDialog alert = dialogBuilder.create();
+        return alert;
     }
 
     private void changeDataset(String path) {
@@ -174,7 +183,12 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.gallery_exit) {
-            finish();
+            if (rankCount > 1) {
+                GetLottoNumberTask lottoTask = new GetLottoNumberTask();
+                lottoTask.execute();
+            } else {
+                finish();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -195,17 +209,18 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         }
     }
 
-    class GetLottoNumberTask extends AsyncTask<Void, Void, ArrayList<String>> {
+    class GetLottoNumberTask extends AsyncTask<Void, Void, String> {
 
         @Override
-        protected ArrayList<String> doInBackground(Void... voids) {
-            return contestManager.getLottoNumberList();
+        protected String doInBackground(Void... voids) {
+            return contestManager.getRecentLottoNumberList();
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String> list) {
-            super.onPostExecute(list);
+        protected void onPostExecute(String lottoNumber) {
+            super.onPostExecute(lottoNumber);
             // notify
+            lottoNumberAlertDialog(lottoNumber).show();
         }
     }
 

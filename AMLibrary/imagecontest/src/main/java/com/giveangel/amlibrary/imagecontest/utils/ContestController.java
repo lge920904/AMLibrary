@@ -60,6 +60,20 @@ public class ContestController extends Controller {
         }
         return lottoNumberList;
     }
+    public String getRecentLottoNumber(HashMap<Object, Object> params) throws JSONException,
+            IOException {
+        String functionURL = URL_CONTEST + FUNCTION_LIST.lotto_url.getUrl();
+        String url = this.getUrl(functionURL, params);
+        String jsonValue = getStringFromUrl(url);
+        HashMap<Object, Object> map = fromJSON(
+                new TypeReference<HashMap<Object, Object>>() {
+                }, jsonValue);
+        System.out.println(url);
+        System.out.println("jsonvalue = " + jsonValue);
+        if (map != null)
+            return map.get("url").toString();
+        return "";
+    }
 
     public ArrayList<String> getImageList(HashMap<Object, Object> params)
             throws JSONException,
