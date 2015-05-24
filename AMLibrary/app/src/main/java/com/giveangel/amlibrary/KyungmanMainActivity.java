@@ -13,13 +13,8 @@ import com.giveangel.amlibrary.imagecontest.InformationActivity;
 import com.giveangel.amlibrary.snapshotmms.MessageSender;
 import com.giveangel.sender.AMLCostants;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 public class KyungmanMainActivity extends Activity {
-    private Timer timer;
-    private TimerTask timerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +23,6 @@ public class KyungmanMainActivity extends Activity {
         setContentView(R.layout.activity_kyungman_main);
         Button mmsButton = (Button) findViewById(R.id.mms);
         Button contestButton = (Button) findViewById(R.id.contest);
-
-        timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                sendTimerMMS();
-            }
-        };
 
         mmsButton.setOnClickListener(new View.OnClickListener() {
             @Override
