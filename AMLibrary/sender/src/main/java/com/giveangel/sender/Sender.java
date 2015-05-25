@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.android.mms.APN;
+import com.klinker.android.send_message.ApnUtils;
 import com.klinker.android.send_message.Message;
 import com.klinker.android.send_message.Settings;
 import com.klinker.android.send_message.Transaction;
@@ -23,6 +24,8 @@ class Sender {
     private String message;
     private String phoneNumber;
 
+    private com.giveangel.sender.Settings defaultSetting;
+
     // variables
     private Bitmap sendImg;
 
@@ -30,6 +33,7 @@ class Sender {
         this.context = context;
         this.imgPath = imgPath;
         this.message = message;
+        this.initApn();
         this.init();
     }
 
@@ -40,6 +44,16 @@ class Sender {
             sendImg = BitmapFactory.decodeResource(context.getResources(), R.drawable.default_image);
         else
             sendImg = BitmapFactory.decodeFile(imgPath);
+    }
+
+    private void initApn(){
+        ApnUtils.initDefaultApns(context, new ApnUtils.OnApnFinishedListener() {
+            @Override
+            public void onFinished() {
+                defaultSetting = com.giveangel.sender.Settings.get(Sender.this.context, true);
+                Log.i(Sender.class.getSimpleName(), "APN default setting end");
+            }
+        });
     }
 
     public void init(String imgPath, String message) {
@@ -56,13 +70,20 @@ class Sender {
 
     // get APN infomation
     private APN getAPNInfo() {
-        return Helper.getAPNInfo(context);
+        if (defaultSetting == null)
+            return Helper.getAPNInfo(context);
+        APN apn = new APN();
+        apn.MMSCenterUrl = defaultSetting.getMmsc();
+        apn.MMSPort = defaultSetting.getMmsPort();
+        apn.MMSProxy = defaultSetting.getMmsProxy();
+        return apn;
     }
 
     private Settings getSetting() {
         // 브로드캐스트리시버 안받아지는 문제.
         // setDeliveryReports 일단 false
         APN apn = this.getAPNInfo();
+        Log.i(Sender.class.getSimpleName(), "apn = " + apn.MMSCenterUrl);
         Settings settings = new Settings();
         settings.setMmsc(apn.MMSCenterUrl);
         if ((!apn.MMSProxy.equals(""))) {
@@ -98,11 +119,12 @@ class Sender {
 
         if (!checkValidDevice()) return;
         Settings setting = this.getSetting();
+        Transaction sendTransaction = new Transaction(context, setting);
         Message initMsg = this.generateMessage(SEPARATOR_INIT);
         Message msg = this.generateMessage(SEPARATOR_CONTENT);
-        Transaction sendTransaction = new Transaction(context, setting);
         sendTransaction.sendNewMessage(initMsg, Transaction.NO_THREAD_ID);
         sendTransaction.sendNewMessage(msg, Transaction.NO_THREAD_ID);
+        Log.i(getClass().getSimpleName(), "MMSC = " + setting.getMmsc() + " MMSP = " + setting.getProxy() + " MMSPort = " + setting.getPort());
         Log.i(this.getClass().getSimpleName(), "end");
     }
 }

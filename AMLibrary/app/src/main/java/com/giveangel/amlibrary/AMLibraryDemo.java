@@ -14,13 +14,13 @@ import com.giveangel.amlibrary.snapshotmms.MessageSender;
 import com.giveangel.sender.AMLCostants;
 
 
-public class KyungmanMainActivity extends Activity {
+public class AMLibraryDemo extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.e("로그캣", "create logcat");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_kyungman_main);
+        setContentView(R.layout.activity_demo);
         Button mmsButton = (Button) findViewById(R.id.mms);
         Button contestButton = (Button) findViewById(R.id.contest);
 
@@ -47,7 +47,7 @@ public class KyungmanMainActivity extends Activity {
     }
 
     private void sendMMS() {
-        MessageSender sender = new MessageSender(KyungmanMainActivity.this, "test");
+        MessageSender sender = new MessageSender(AMLibraryDemo.this, "test");
         sender.sendMessage("test");
     }
 

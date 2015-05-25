@@ -93,7 +93,8 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                         // 'YES'
                         //MessageSender sender = new MessageSender(GalleryJudgeActivity.this, appName);
                         if (manager.checkValidJudge()) {
-                            sender.sendMessage(view, rankCount + "등:" + urlPath);
+                            sender.sendMessage(view, rankCount + "등");
+//                            sender.sendMessage(view, rankCount + "등:" + urlPath);
                             changeDataset(urlPath);
                             rankCount++;
                             Toast.makeText(GalleryJudgeActivity.this,
