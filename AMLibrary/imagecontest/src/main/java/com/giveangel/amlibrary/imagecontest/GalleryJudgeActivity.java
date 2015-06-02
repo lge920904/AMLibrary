@@ -159,7 +159,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         public boolean checkValidJudge() {
             long currentTimeValue = System.currentTimeMillis();
             Log.i("timeCheck", prevTimeValue + " current : " + currentTimeValue);
-            if (currentTimeValue - prevTimeValue > 3000) {
+            if (currentTimeValue - prevTimeValue > 1000) {
                 prevTimeValue = currentTimeValue;
                 return true;
             } else {
