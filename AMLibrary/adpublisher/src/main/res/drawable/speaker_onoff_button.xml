@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 평상시 -->
+    <item android:drawable="@drawable/btn_speaker_off" android:state_checked="false">
+
+    </item>
+    <item android:drawable="@drawable/btn_speaker_on" android:state_focused="false" android:state_pressed="true">
+
+    </item>
+    <item android:drawable="@drawable/btn_speaker_on" android:state_checked="true">
+
+    </item>
+
+
+</selector>

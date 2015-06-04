@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
-import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -12,10 +11,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.android.internal.telephony.ITelephony;
+import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Method;
 
@@ -27,6 +26,7 @@ public class ADPublisherActivity extends Activity {
     private Button closeActivity;
     private Button callOff;
 
+    private final static String AD_IMAGE_REQUEST_URL = "";
     private final static String TAG = "ADPublisherActivity";
     private TelephonyManager telephony;
     private AudioManager audioManager;
@@ -65,11 +65,7 @@ public class ADPublisherActivity extends Activity {
         Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn());*/
 
 
-        if (speakerMode.isChecked()) {
-            /* 통화모드 수화기로 변경 */
-        } else {
-            /* 통화모드 스피커로 변경 */
-        }
+
     }
 
     public void callOff() {
@@ -112,6 +108,11 @@ public class ADPublisherActivity extends Activity {
         receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
         receiverNumber.setText(phoneNumber);
         adImage = (ImageView) findViewById(R.id.img_ad);
+
+        Picasso.with(this)
+                .load(getADImageFromServer())
+                .fit().centerCrop()
+                .into(adImage);
         speakerMode = (ToggleButton) findViewById(R.id.btn_speaker_mode);
         callOff = (Button) findViewById(R.id.btn_call_off);
         closeActivity = (Button) findViewById(R.id.btn_close_activity);
@@ -121,4 +122,12 @@ public class ADPublisherActivity extends Activity {
         callOff.setOnClickListener(clickListener);
         closeActivity.setOnClickListener(clickListener);
     }
+
+    private String getADImageFromServer() {
+        String adImageUrl = null;
+        // request image to AD_IMAGE_REQUEST_URL;
+        adImageUrl = "http://image.genie.co.kr/Y/IMAGE/IMG_MUZICAT/IV2/Event/2015/5/19/ban_0_2015519144242.jpg";
+        return adImageUrl;
+    }
+
 }

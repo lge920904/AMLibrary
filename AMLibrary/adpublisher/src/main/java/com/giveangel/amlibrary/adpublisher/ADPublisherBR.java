@@ -25,7 +25,7 @@ public class ADPublisherBR extends BroadcastReceiver {
         bIntent = intent;
         String action = bIntent.getAction();
         if (action.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
-            callActionHandler.postDelayed(runRingingActivity, 1000);
+            callActionHandler.postDelayed(runRingingActivity, 800);
         }
     }
 
@@ -36,6 +36,7 @@ public class ADPublisherBR extends BroadcastReceiver {
             phoneNumber = bIntent.getExtras().getString(Intent.EXTRA_PHONE_NUMBER);
             Log.d(TAG, phoneNumber);
 
+            //getReceiverData();
             Uri uri;
             String[] projection;
 
@@ -55,11 +56,12 @@ public class ADPublisherBR extends BroadcastReceiver {
 
             Log.i(TAG,"Receiver:"+displayName+" - " + phoneNumber);
             bIntent = new Intent(bContext, ADPublisherActivity.class);
-            bIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            bIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            bIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            bIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            bIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
             bIntent.putExtra("phoneNumber", phoneNumber);
             bIntent.putExtra("displayName", displayName);
-
             bContext.startActivity(bIntent);
         }
     };
