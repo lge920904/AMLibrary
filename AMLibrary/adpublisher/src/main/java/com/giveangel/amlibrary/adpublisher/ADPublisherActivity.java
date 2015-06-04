@@ -26,6 +26,9 @@ public class ADPublisherActivity extends Activity {
     private Button closeActivity;
     private Button callOff;
 
+    private String adImageUrl = null; // 화면에 보여질 사진주소
+    private String adRequestUrl = null; // 사진을 누르면 이동할 주소
+
     private final static String AD_IMAGE_REQUEST_URL = "";
     private final static String TAG = "ADPublisherActivity";
     private TelephonyManager telephony;
@@ -50,25 +53,29 @@ public class ADPublisherActivity extends Activity {
                 closeActivity();
             } else if (id == R.id.img_ad) {
                 /*광고 이미지 클릭 */
+                showAD();
             }
+        }
+
+        private void showAD() {
+            // adRequestUrl 띄움.!
         }
     };
 
-    public void changeCallMode() {
+    private void changeCallMode() {
 
 /*
       스피커폰 변환이 안됌. 자살각.
-  audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioManager.setMode(AudioManager.MODE_IN_CALL);
         Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn());
         audioManager.setSpeakerphoneOn(true);
         Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn());*/
 
 
-
     }
 
-    public void callOff() {
+    private void callOff() {
         if (telephony.getCallState() == TelephonyManager.CALL_STATE_OFFHOOK) {
             try {
                 Class c = Class.forName(telephony.getClass().getName());
@@ -84,7 +91,7 @@ public class ADPublisherActivity extends Activity {
         closeActivity();
     }
 
-    public void closeActivity() {
+    private void closeActivity() {
         /* 화면닫기 */
         this.finish();
     }
@@ -109,10 +116,14 @@ public class ADPublisherActivity extends Activity {
         receiverNumber.setText(phoneNumber);
         adImage = (ImageView) findViewById(R.id.img_ad);
 
-        Picasso.with(this)
-                .load(getADImageFromServer())
-                .fit().centerCrop()
-                .into(adImage);
+        if (sendADImageRequestToServer()) {
+            Picasso.with(this)
+                    .load(adImageUrl)
+                    .fit().centerCrop()
+                    .into(adImage);
+        } else {
+            // 서버로부터 이미지를 가져오지 못했을 때. (이미지가 null)
+        }
         speakerMode = (ToggleButton) findViewById(R.id.btn_speaker_mode);
         callOff = (Button) findViewById(R.id.btn_call_off);
         closeActivity = (Button) findViewById(R.id.btn_close_activity);
@@ -123,11 +134,11 @@ public class ADPublisherActivity extends Activity {
         closeActivity.setOnClickListener(clickListener);
     }
 
-    private String getADImageFromServer() {
-        String adImageUrl = null;
+    private boolean sendADImageRequestToServer() {
         // request image to AD_IMAGE_REQUEST_URL;
         adImageUrl = "http://image.genie.co.kr/Y/IMAGE/IMG_MUZICAT/IV2/Event/2015/5/19/ban_0_2015519144242.jpg";
-        return adImageUrl;
+        adRequestUrl = "http://www.naver.com";
+        return true;
     }
 
 }

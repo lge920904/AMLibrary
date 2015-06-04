@@ -11,6 +11,7 @@
         android:layout_height="72dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
@@ -30,24 +31,20 @@
             android:textSize="28sp" />
     </LinearLayout>
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/img_ad"
         android:layout_width="340dp"
         android:layout_height="340dp"
         android:layout_gravity="center"
         android:layout_margin="10dp"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/img_ad"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:clickable="true" />
-    </LinearLayout>
+        android:layout_weight="2"
+        android:clickable="true" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_weight="1"
         android:orientation="horizontal">
 
         <ToggleButton
@@ -56,7 +53,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/speaker_onoff_button"
             android:textOff=" "
             android:textOn=" " />
@@ -67,7 +64,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/calloff_button" />
 
         <Button
@@ -76,7 +73,7 @@
             android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="2dp"
             android:background="@drawable/close_activity_button" />
     </LinearLayout>
 </LinearLayout>

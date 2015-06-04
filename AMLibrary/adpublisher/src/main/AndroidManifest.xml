@@ -1,28 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.giveangel.amlibrary.adpublisher">
+    package="com.giveangel.amlibrary.adpublisher" >
 
     <application
         android:allowBackup="true"
-        android:label="@string/app_name">
-
+        android:label="@string/app_name" >
         <activity
             android:name=".ADPublisherActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
             <intent-filter>
                 <action android:name="android.intent.action.ANSWER" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <receiver
-            android:name="com.giveangel.amlibrary.adpublisher.ADPublisherBR"
+            android:name=".ADPublisherBR"
             android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="99999">
+            android:exported="true" >
+            <intent-filter android:priority="99999" >
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".CallOffActivity"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
     </application>
 
 </manifest>

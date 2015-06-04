@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#30ffffff"
+    android:orientation="vertical"
+    tools:context="com.giveangel.amlibrary.adpublisher.CallOffActivity">
+
+    <TextView
+        android:text="오늘도 행복한 하루 되세요!"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_weight="1"
+        android:textSize="28sp"/>
+    <ImageView
+        android:id="@+id/img_calloff_ad"
+        android:layout_width="340dp"
+        android:layout_height="340dp"
+        android:layout_gravity="center"
+        android:layout_margin="20dp"
+        android:layout_weight="2"
+        android:clickable="true" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/btn_close_activity"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/close_activity_button" />
+        </LinearLayout>
+</LinearLayout>
