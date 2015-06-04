@@ -2,6 +2,7 @@ package com.giveangel.amlibrary.adpublisher;
 
 import android.app.Activity;
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -28,6 +29,7 @@ public class ADPublisherActivity extends Activity {
 
     private final static String TAG = "ADPublisherActivity";
     private TelephonyManager telephony;
+    private AudioManager audioManager;
 
     /**
      * 버튼 이벤트 리스너
@@ -53,12 +55,20 @@ public class ADPublisherActivity extends Activity {
     };
 
     public void changeCallMode() {
+
+/*
+      스피커폰 변환이 안됌. 자살각.
+  audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setMode(AudioManager.MODE_IN_CALL);
+        Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn());
+        audioManager.setSpeakerphoneOn(true);
+        Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn());*/
+
+
         if (speakerMode.isChecked()) {
             /* 통화모드 수화기로 변경 */
-            Toast.makeText(this, "수화기로 변경", Toast.LENGTH_SHORT).show();
         } else {
             /* 통화모드 스피커로 변경 */
-            Toast.makeText(this, "스피커로 변경", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -87,6 +97,9 @@ public class ADPublisherActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adpublisher);
+        String phoneNumber = getIntent().getStringExtra("phoneNumber");
+        String displayName = getIntent().getStringExtra("displayName");
+
         telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
@@ -95,7 +108,9 @@ public class ADPublisherActivity extends Activity {
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         receiverName = (TextView) findViewById(R.id.text_receiver_name);
+        receiverName.setText(displayName);
         receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
+        receiverNumber.setText(phoneNumber);
         adImage = (ImageView) findViewById(R.id.img_ad);
         speakerMode = (ToggleButton) findViewById(R.id.btn_speaker_mode);
         callOff = (Button) findViewById(R.id.btn_call_off);

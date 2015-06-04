@@ -14,14 +14,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <service
-            android:name="com.giveangel.amlibrary.adpublisher.ADPublisherService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.example.leegaeul.adpublisher.ADPUBLISHERSERVICE" />
-            </intent-filter>
-        </service>
         <receiver
             android:name="com.giveangel.amlibrary.adpublisher.ADPublisherBR"
             android:enabled="true"

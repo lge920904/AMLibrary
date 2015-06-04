@@ -3,13 +3,17 @@ package com.giveangel.amlibrary.adpublisher;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 public class ADPublisherBR extends BroadcastReceiver {
     private final static String TAG = "ABPublisherBR";
     private Context bContext;
     private Intent bIntent;
+    private String displayName;
     private String phoneNumber;
 
     @Override
@@ -19,36 +23,44 @@ public class ADPublisherBR extends BroadcastReceiver {
         Log.i(this.getClass().getSimpleName(), "in Broadcast");
         bContext = context;
         bIntent = intent;
-        phoneNumber = getResultData();
-        if (phoneNumber == null) {
-            phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+        String action = bIntent.getAction();
+        if (action.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
+            callActionHandler.postDelayed(runRingingActivity, 1000);
         }
-        setResultData(phoneNumber);
-        callActionHandler.postDelayed(runRingingActivity, 1000);
-//        String action = bIntent.getAction();
-//        String state = bIntent.getStringExtra(TelephonyManager.EXTRA_STATE);
-//
-//        if (action.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
-//
-//        } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
-//            Log.i(TAG, "extra_state_offhook");
-//            bIntent.setClass(bContext, ADPublisherService.class);
-//            bContext.startService(bIntent);
-//        } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
-//            Log.i(TAG, "extra_state_idle");
-//            bContext.stopService(bIntent);
-//        }
     }
 
     Handler callActionHandler = new Handler();
     Runnable runRingingActivity = new Runnable() {
         @Override
         public void run() {
+            phoneNumber = bIntent.getExtras().getString(Intent.EXTRA_PHONE_NUMBER);
+            Log.d(TAG, phoneNumber);
 
-            Intent intentPhoneCall = new Intent(bContext, ADPublisherActivity.class);
-            intentPhoneCall.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intentPhoneCall.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            bContext.startActivity(intentPhoneCall);
+            Uri uri;
+            String[] projection;
+
+            // If targeting Donut or below, use
+            // Contacts.Phones.CONTENT_FILTER_URL and
+            // Contacts.Phones.DISPLAY_NAME
+            uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+            projection = new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME};
+
+            // Query the filter URI
+            Cursor cursor = bContext.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor != null) {
+                if (cursor.moveToFirst())
+                    displayName = cursor.getString(0);
+                cursor.close();
+            }
+
+            Log.i(TAG,"Receiver:"+displayName+" - " + phoneNumber);
+            bIntent = new Intent(bContext, ADPublisherActivity.class);
+            bIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            bIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            bIntent.putExtra("phoneNumber", phoneNumber);
+            bIntent.putExtra("displayName", displayName);
+
+            bContext.startActivity(bIntent);
         }
     };
 }
