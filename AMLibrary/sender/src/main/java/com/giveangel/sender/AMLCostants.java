@@ -21,6 +21,8 @@ public class AMLCostants {
     public static final String VALUE_RETURN_VALID_TRUE = "y";
     public static final String VALUE_RETURN_VALID_FALSE = "n";
 
+    public static final String KEY_RETURN_TARGET_NUMBER = "number";
+
     public static int getAgencyCode(String agencyName) {
         for (AGENCY agency : AGENCY.values()) {
             if (agency.getName().equals(agencyName)) {

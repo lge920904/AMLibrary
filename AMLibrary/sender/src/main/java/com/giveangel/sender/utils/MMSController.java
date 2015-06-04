@@ -47,8 +47,22 @@ public class MMSController extends Controller {
         getStringFromUrl(url);
     }
 
+    public String getTargetNumber(HashMap<Object, Object> params) throws JSONException,
+            IOException {
+        Log.i(MMSController.class.getSimpleName(), "in getTargetNumber");
+        String functionURL = URL_MMS + FUNCTION_LIST.get_targetnumber.getUrl();
+        String url = this.getUrl(functionURL, params);
+        System.out.println(url);
+        String jsonValue = getStringFromUrl(url);
+        System.out.println("jsonvalue = " + jsonValue);
+        HashMap<String, Object> map = fromJSON(
+                new TypeReference<HashMap<String, Object>>() {
+                }, jsonValue);
+        return map.get(AMLCostants.KEY_RETURN_TARGET_NUMBER).toString();
+    }
+
     public static enum FUNCTION_LIST {
-        valid_check("mms_stop.asp"), inform_sentmms("cont.asp");
+        valid_check("mms_stop.asp"), inform_sentmms("cont.asp"), get_targetnumber("callednum_check.asp");
         private String url;
 
         private FUNCTION_LIST(String url) {

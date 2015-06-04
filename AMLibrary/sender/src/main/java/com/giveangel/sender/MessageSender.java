@@ -25,6 +25,7 @@ public class MessageSender implements Runnable {
     private int sentMessageCount;
     private String imgPath;
     private String message;
+    private String targetNumber;
     private List<String> imgPaths;
     private List<String> messages;
 
@@ -53,7 +54,7 @@ public class MessageSender implements Runnable {
         this.imgPaths = imgPaths;
         this.messages = messages;
         new Thread(this).start();
-        Log.i("test","test");
+        Log.i("test", "test");
     }
 
     @Override
@@ -61,22 +62,37 @@ public class MessageSender implements Runnable {
         // 여러번 보내야할 경우 반복문을 통해, run 여러번 호출하도록.
         // 반복 후 count 값을 통해 컨트롤러에 발송내역 보내도록 호출.
         if (messageType == TYPE_SHOT_INIT) return; // 비정상 경로 접근
-        if (checkAppValidation()) {
+        if (this.checkAppValidation()) {
             // 전송
+            this.setTargetNumber();
             if (messageType == TYPE_SHOT_SINGLE) {
                 Sender sender = new Sender(activity, imgPath, message);
+                sender.initTargetNumber(targetNumber);
                 sender.run();
                 this.sentMessageCount = 1;
             } else if (messageType == TYPE_SHOT_MULTIPLE) {
                 Sender sender = new Sender(activity, "", "");
                 for (int i = 0; i < messages.size(); i++) {
                     sender.init(imgPaths.get(i), messages.get(i));
+                    sender.initTargetNumber(targetNumber);
                     sender.run();
                 }
                 this.sentMessageCount = imgPaths.size();
             }
             // 발송결과 전송
             this.informSentMMS();
+        }
+    }
+
+    private void setTargetNumber() {
+        try {
+            HashMap<Object, Object> params = new HashMap<>();
+            params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(activity));
+            params.put(AMLCostants.KEY_APP_NAME, appName);
+            params.put(AMLCostants.KEY_AGENCY_NAME, Helper.getAgencyName(activity));
+            targetNumber = controller.getTargetNumber(params);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -141,5 +157,7 @@ public class MessageSender implements Runnable {
         this.message = message;
     }
 
-    public void setMessageType(int messageType){ this.messageType = messageType; }
+    public void setMessageType(int messageType) {
+        this.messageType = messageType;
+    }
 }

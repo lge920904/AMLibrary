@@ -55,6 +55,9 @@ public class GalleryJudgeActivity extends ActionBarActivity {
     private ContestManager contestManager;
     private BackPressCloseHandler backPressCloseHandler;
 
+    private AlertDialog contestRankDialog;
+    private AlertDialog lottoDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +76,12 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                sendContestRankDialog(view, resultList.get(i)).show();
+                if (contestRankDialog != null) {
+                    contestRankDialog.dismiss();
+                    contestRankDialog = null;
+                }
+                contestRankDialog = sendContestRankDialog(view, resultList.get(i));
+                contestRankDialog.show();
             }
         });
     }
@@ -99,6 +107,11 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                             rankCount++;
                             Toast.makeText(GalleryJudgeActivity.this,
                                     CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
+
+                            if(resultList.size() == 0){
+                                // 투표 종료됬음.
+                                finishTask();
+                            }
                         }
                     }
                 }).setNegativeButton(BUTTON_NEGATIVE,
@@ -130,7 +143,22 @@ public class GalleryJudgeActivity extends ActionBarActivity {
 
     private void changeDataset(String path) {
         resultList.remove(path);
-        adapter.notifyDataSetChanged();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        // TODO Auto-generated method stub
+        super.onStop();
+        if (contestRankDialog != null)
+            contestRankDialog.dismiss();
+        if (lottoDialog != null)
+            lottoDialog.dismiss();
     }
 
     @Override
@@ -184,14 +212,18 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.gallery_exit) {
-            if (rankCount > 1) {
-                GetLottoNumberTask lottoTask = new GetLottoNumberTask();
-                lottoTask.execute();
-            } else {
-                finish();
-            }
+           finishTask();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void finishTask(){
+        if (rankCount > 1) {
+            GetLottoNumberTask lottoTask = new GetLottoNumberTask();
+            lottoTask.execute();
+        } else {
+            finish();
+        }
     }
 
     class GetImageUrlTask extends AsyncTask<Void, Void, Void> {
@@ -221,7 +253,12 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         protected void onPostExecute(String lottoNumber) {
             super.onPostExecute(lottoNumber);
             // notify
-            lottoNumberAlertDialog(lottoNumber).show();
+            if (lottoDialog != null) {
+                lottoDialog.dismiss();
+                lottoDialog = null;
+            }
+            lottoDialog = lottoNumberAlertDialog(lottoNumber);
+            lottoDialog.show();
         }
     }
 

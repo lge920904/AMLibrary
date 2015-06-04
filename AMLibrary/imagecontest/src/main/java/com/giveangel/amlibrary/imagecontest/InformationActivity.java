@@ -222,6 +222,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
                     public void onClick(DialogInterface dialog, int which) {
                         // 'YES'
                         sender = new MessageSender(InformationActivity.this, "contest");
+//                        sender = new MessageSender(InformationActivity.this, "contest");
                         sender.sendMessage(filePath, CONTEST_MSG_JOIN);
                         Toast.makeText(InformationActivity.this,
                                 CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
