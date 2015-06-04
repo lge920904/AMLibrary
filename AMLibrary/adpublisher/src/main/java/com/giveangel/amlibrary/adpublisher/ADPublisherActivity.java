@@ -1,7 +1,10 @@
 package com.giveangel.amlibrary.adpublisher;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -34,6 +37,16 @@ public class ADPublisherActivity extends Activity {
     private TelephonyManager telephony;
     private AudioManager audioManager;
 
+    private boolean MODE_SPEAKER;
+
+    private final BroadcastReceiver finishActionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(getClass().getSimpleName(), "in action - " + intent.getAction());
+            closeActivity();
+        }
+    };
+
     /**
      * 버튼 이벤트 리스너
      */
@@ -63,16 +76,12 @@ public class ADPublisherActivity extends Activity {
     };
 
     private void changeCallMode() {
-
-/*
-      스피커폰 변환이 안됌. 자살각.
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        MODE_SPEAKER = !MODE_SPEAKER;
+        audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         audioManager.setMode(AudioManager.MODE_IN_CALL);
-        Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn());
-        audioManager.setSpeakerphoneOn(true);
-        Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn());*/
-
-
+        Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn() + " mode: " + audioManager.getMode());
+        audioManager.setSpeakerphoneOn(MODE_SPEAKER);
+        Log.e(TAG, "speakerPhone:" + audioManager.isSpeakerphoneOn() + " mode: " + audioManager.getMode());
     }
 
     private void callOff() {
@@ -103,7 +112,8 @@ public class ADPublisherActivity extends Activity {
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
         String displayName = getIntent().getStringExtra("displayName");
 
-        telephony = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        registerReceiver(finishActionReceiver, new IntentFilter("FINISH_ACTIVITY"));
+        telephony = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
@@ -115,6 +125,7 @@ public class ADPublisherActivity extends Activity {
         receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
         receiverNumber.setText(phoneNumber);
         adImage = (ImageView) findViewById(R.id.img_ad);
+        MODE_SPEAKER = false;
 
         if (sendADImageRequestToServer()) {
             Picasso.with(this)
@@ -141,4 +152,9 @@ public class ADPublisherActivity extends Activity {
         return true;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(finishActionReceiver);
+    }
 }

@@ -19,30 +19,49 @@ public class ADPublisherBR extends BroadcastReceiver {
     private String phoneNumber;
     private String action;
     private boolean isCallOffIdle = false;
-    private MyPhoneStateListener phoneListener;
     private TelephonyManager telephony;
 
+    /* 브로드 캐스트 생길때마다 계속 생성하고 붙이는 작업을 계속하고있었음.
+     * 따라서 static 으로 변경 후 null 일때만 재생성 하도록 수정  */
+    static MyPhoneStateListener phoneListener;
+
+    /* 통화 연결 순간 광고 액티비티를 제거하는 코드
+    연결순간 따로 이벤트가 없어 어디 붙일수가 없음 ㅎㅎ;
+   bContext.sendBroadcast(new Intent("FINISH_ACTIVITY"));
+   */
     private class MyPhoneStateListener extends PhoneStateListener {
+        private int lastState = TelephonyManager.CALL_STATE_IDLE;
+        private boolean isOutgoingCall = false;
+
+        public void setOutgoingCall(boolean isOutgoingCall) {
+            this.isOutgoingCall = isOutgoingCall;
+        }
+
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
+            if (lastState == state) {
+                /* 이전 상태와 같으면 처리할 필요 없으니 return */
+                isCallOffIdle = true;
+                return;
+            }
             switch (state) {
                 case TelephonyManager.CALL_STATE_IDLE:
                     if (isCallOffIdle) {
                         /* 통화 종료하면 광고 뜨도록 */
                         isCallOffIdle = false;
-                        callActionHandler.postDelayed(runCallOffActivity, 500);
+                        if (isOutgoingCall)
+                            callActionHandler.postDelayed(runCallOffActivity, 700);
+                        setOutgoingCall(false);
                     }
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
-                    if (!action.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
-                        isCallOffIdle = true;
-                    }
                     break;
                 case TelephonyManager.CALL_STATE_RINGING:
                     break;
                 default:
                     break;
             }
+            lastState = state;
         }
     }
 
@@ -50,17 +69,21 @@ public class ADPublisherBR extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
-        Log.i(this.getClass().getSimpleName(), "in Broadcast");
         bContext = context;
         bIntent = intent;
         action = bIntent.getAction();
+        Log.i(this.getClass().getSimpleName(), "in Broadcast - " + action);
+        /* init Listener */
+        if (phoneListener == null)
+            phoneListener = new MyPhoneStateListener();
 
         /* 통화 걸 때 */
         if (action.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
             callActionHandler.postDelayed(runRingingActivity, 500);
+            phoneListener.setOutgoingCall(true);
         }
-        /* 통화 종료했을 때 */
-        phoneListener = new MyPhoneStateListener();
+        /* set Listener - onReceive
+         * 마다 계속 호출되어야함 */
         telephony = (TelephonyManager) bContext.getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
     }
