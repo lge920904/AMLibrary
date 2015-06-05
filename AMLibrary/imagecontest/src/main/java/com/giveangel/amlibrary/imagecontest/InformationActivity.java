@@ -72,6 +72,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         }
     }
 
+    /* 안내 다이얼로그 생성 */
     private AlertDialog lottoNumberAlertDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(CONTEST_MSG_CONFIRM_EXIT)
@@ -101,14 +102,15 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         super.onResume();
     }
 
+    /* 임시 이미지 붙이는 함수 */
     private void settingTemp() {
-
         Picasso.with(this)
                 .load("http://cafeptthumb4.phinf.naver.net/20150515_158/joonggo_safe_14316834508065pKXS_JPEG/%C0%A5_%BB%F3%BC%BC.jpg?type=w740")
                 .fit().centerCrop()
                 .into(eventSummaryImg);
     }
 
+    /* 유효성 체크 함수 */
     public class ValidCheckTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... voids) {
@@ -126,6 +128,8 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         }
     }
 
+    /* 상세 정보 보기를 눌렀을때, 포워딩할 url을 가져오고
+     * 해당 url 인터넷창을 띄워주는 함수 */
     class GetInformation extends AsyncTask<Void, Void, String> {
 
         @Override
@@ -149,12 +153,15 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         }
     }
 
+    /* 공모전 참가를 클릭시 내 갤러리에서
+    참가할 이미지를 선택하게 하는 함수 */
     public void chooseImage() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, SELECT_PHOTO);
     }
 
+    /* 공모전 심사 선택 시 해당 액티비티로 이동하게 하는 함수 */
     private void judgeContest() {
         Intent intent = new Intent(this, JudgeActivity.class);
         Bundle bundle = new Bundle();
@@ -189,7 +196,8 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         }
     }
 
-
+    /* 갤러리에서 사진을 선택하면
+     * 공모전에 참가 다이얼로그를 띄워주는 함수 */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -200,6 +208,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         }
     }
 
+    /* 선택한 사진의 URL을 가져오는 함수 */
     private String getFilePath(Intent data) {
         Uri selectedImage = data.getData();
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
@@ -214,6 +223,7 @@ public class InformationActivity extends ActionBarActivity implements View.OnCli
         return filePath;
     }
 
+    /* 공모전에 참가할 것인지 묻는 다이얼로그를 생성 */
     private AlertDialog getCheckJoinContest(final String filePath) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(InformationActivity.this);
         dialogBuilder.setMessage(CONTEST_MSG_PICKING).setCancelable(false).setPositiveButton(BUTTON_POSITIVE,

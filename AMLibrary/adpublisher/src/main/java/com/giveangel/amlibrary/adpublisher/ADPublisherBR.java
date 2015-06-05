@@ -25,10 +25,6 @@ public class ADPublisherBR extends BroadcastReceiver {
      * 따라서 static 으로 변경 후 null 일때만 재생성 하도록 수정  */
     static MyPhoneStateListener phoneListener;
 
-    /* 통화 연결 순간 광고 액티비티를 제거하는 코드
-    연결순간 따로 이벤트가 없어 어디 붙일수가 없음 ㅎㅎ;
-   bContext.sendBroadcast(new Intent("FINISH_ACTIVITY"));
-   */
     private class MyPhoneStateListener extends PhoneStateListener {
         private int lastState = TelephonyManager.CALL_STATE_IDLE;
         private boolean isOutgoingCall = false;

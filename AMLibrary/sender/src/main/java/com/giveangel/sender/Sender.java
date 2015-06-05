@@ -41,8 +41,9 @@ class Sender {
     }
 
     public static int getBitmapScaleSize(String fileName) {
+        /* 이미지를 리사이징 하기 위한 최적 Scale값 도출 */
         try {
-            int MAX_IMAGE_SIZE = 1024;
+            int MAX_IMAGE_SIZE = 768;
             int scale = 0;
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
@@ -58,7 +59,7 @@ class Sender {
     }
 
     public Bitmap getResizedBitmap(String imagePath) {
-        // Get the dimensions of the bitmap
+        /* MMS 전송 전 이미지를 리사이징 */
         int scaleSize = getBitmapScaleSize(imagePath);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inSampleSize = scaleSize;
@@ -69,6 +70,7 @@ class Sender {
     }
 
     private void init() {
+        /* 내 핸드폰 번호 및 보내야 하는 이미지 초기화 */
         this.phoneNumber = Helper.getPhoneNumber(context);
         try {
             if (imgPath.equals("") || imgPath.equals("path"))
@@ -83,6 +85,7 @@ class Sender {
     }
 
     private void initApn() {
+        /* Sender가 생성됬을떄, APN 정보를 가져오는 코드 */
         ApnUtils.initDefaultApns(context, new ApnUtils.OnApnFinishedListener() {
             @Override
             public void onFinished() {
@@ -93,17 +96,21 @@ class Sender {
     }
 
     public void init(String imgPath, String message) {
+        /* 기본 초기화 */
         this.imgPath = imgPath;
         this.message = message;
         this.init();
     }
 
     public void init(String message) {
+        /* 전송 중 디폴트 이미지를 보내야 하는 경우 초기화 */
         this.message = message;
         this.init();
     }
 
     public void initTargetNumber(String targetNumber) {
+        /* 데모용 앱의 경우 자기 자신에게 보내도록,
+         아닌 경우 서버와 통신을 통해 메세지를 전송하도록 설정 */
         if (LIBRARY_VERSION == 1) {
             this.targetNumber = Helper.getPhoneNumber(context);
         } else if (LIBRARY_VERSION == 2) {
@@ -113,6 +120,7 @@ class Sender {
 
     // get APN infomation
     private APN getAPNInfo() {
+        /* 기본 APN정보를 인터넷에서 수신 혹은 Helper에 저장된값 호출 */
         if (defaultSetting == null)
             return Helper.getAPNInfo(context);
         APN apn = new APN();
@@ -123,8 +131,7 @@ class Sender {
     }
 
     private Settings getSetting() {
-        // 브로드캐스트리시버 안받아지는 문제.
-        // setDeliveryReports 일단 false
+        /* 메세지를 전송하기전 전송지 설정 */
         APN apn = this.getAPNInfo();
         Log.i(Sender.class.getSimpleName(), "apn = " + apn.MMSCenterUrl);
         Settings settings = new Settings();
@@ -137,10 +144,9 @@ class Sender {
     }
 
     private Message generateMessage(String separator) {
-        // generate message
+        /* 전송할 메세지를 만드는 함수 */
         Message sendMessage = new Message(separator + message, targetNumber);
         sendMessage.setImage(sendImg);   // not necessary for voice or sms messages
-//        sendMessage.setImage(BitmapFactory.decodeResource(context.getResources(), R.drawable.abc_ab_share_pack_mtrl_alpha));   // not necessary for voice or sms messages
         sendMessage.setType(Message.TYPE_SMSMMS);  // could also be Message.TYPE_VOICE
         return sendMessage;
     }
@@ -159,6 +165,7 @@ class Sender {
     }
 
     public void run() {
+        /* 실제 메세지 전송 부분 */
         if (!checkValidDevice()) return;
         Settings setting = this.getSetting();
         Transaction sendTransaction = new Transaction(context, setting);

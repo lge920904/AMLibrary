@@ -1,7 +1,6 @@
 package com.giveangel.sender;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.giveangel.sender.utils.MMSController;
 
@@ -34,11 +33,9 @@ public class MessageSender implements Runnable {
         this.activity = activity;
         this.appName = appName;
         this.controller = new MMSController(activity);
-        Log.i("", "in contructor");
     }
 
     public void sendMessage(String imgPath, String message) {
-        Log.i("", "in run");
         this.messageType = TYPE_SHOT_SINGLE;
         this.imgPath = imgPath;
         this.message = message;
@@ -54,7 +51,6 @@ public class MessageSender implements Runnable {
         this.imgPaths = imgPaths;
         this.messages = messages;
         new Thread(this).start();
-        Log.i("test", "test");
     }
 
     @Override

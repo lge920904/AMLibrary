@@ -91,6 +91,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         backPressCloseHandler.onBackPressed();
     }
 
+    /* 이미지 선택시 출력되야할 다이얼로그를 생성하는 함수 */
     private AlertDialog sendContestRankDialog(final View view, final String urlPath) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(CONTEST_MSG_PICKING_FRONT + rankCount + CONTEST_MSG_PICKING_BACK)
@@ -99,7 +100,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // 'YES'
-                        //MessageSender sender = new MessageSender(GalleryJudgeActivity.this, appName);
+                        /* 유효한 요청인지 확인 후 메세지 전송 */
                         if (manager.checkValidJudge()) {
                             sender.sendMessage(view, rankCount + "등");
 //                            sender.sendMessage(view, rankCount + "등:" + urlPath);
@@ -107,9 +108,8 @@ public class GalleryJudgeActivity extends ActionBarActivity {
                             rankCount++;
                             Toast.makeText(GalleryJudgeActivity.this,
                                     CONTEST_MSG_THANK, Toast.LENGTH_SHORT).show();
-
-                            if(resultList.size() == 0){
-                                // 투표 종료됬음.
+                            if (resultList.size() == 0) {
+                                /* 남은 이미지가 없다면 투표 종료 */
                                 finishTask();
                             }
                         }
@@ -126,6 +126,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         return alert;
     }
 
+    /* 경품안내 다이얼로그를 생성하는 함수 */
     private AlertDialog lottoNumberAlertDialog(String lottoNumber) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(CONTEST_MSG_LOTTO_FRONT + lottoNumber + CONTEST_MSG_LOTTO_BACK)
@@ -141,6 +142,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         return alert;
     }
 
+    /* 갤러리의 데이터를 바꿀때마다 호출하는 함수 */
     private void changeDataset(String path) {
         resultList.remove(path);
         runOnUiThread(new Runnable() {
@@ -177,6 +179,9 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         }
     }
 
+    /* 단시간에 많은 메세지를 전송하려 할때
+    * 잠재적인 OOM, Connection 등 문제가 있음.
+    * 따라서 1초이내에 중복된 요청이 들어오는 것을 방지 */
     class ContestJudgeManager {
         private long prevTimeValue;
 
@@ -212,12 +217,14 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.gallery_exit) {
-           finishTask();
+            finishTask();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void finishTask(){
+    /* 액티비티를 종료시킬때 호출하는 함수
+    * 투표에 참여했다면 경품 지급 다이얼로그를 생성. */
+    public void finishTask() {
         if (rankCount > 1) {
             GetLottoNumberTask lottoTask = new GetLottoNumberTask();
             lottoTask.execute();
@@ -226,6 +233,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         }
     }
 
+    /* 각 이미지의 URL을 가져와, 그리드뷰에 붙이는 동작을 하는 ASYNCTASK */
     class GetImageUrlTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -242,6 +250,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         }
     }
 
+    /* 경품의 정보를 가져오는 ASYNCTASK */
     class GetLottoNumberTask extends AsyncTask<Void, Void, String> {
 
         @Override
@@ -262,6 +271,7 @@ public class GalleryJudgeActivity extends ActionBarActivity {
         }
     }
 
+    /* Gridview에 url에 따라 가져온 이미지를 붙이는 Adapter */
     private class GridViewAdapter extends BaseAdapter {
         @Override
         public int getCount() {

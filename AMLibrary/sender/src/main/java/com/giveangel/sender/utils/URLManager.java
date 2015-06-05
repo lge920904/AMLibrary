@@ -9,6 +9,7 @@ import java.util.Map;
  */
 class URLManager {
 
+    /* 파라메터 Key, Value를 통해 전송해야하는 URL을 생성 */
     public static String getUrl(String rootURL, HashMap<Object, Object> params) {
         // TODO Auto-generated method stub
         String createdURL = rootURL + "?";

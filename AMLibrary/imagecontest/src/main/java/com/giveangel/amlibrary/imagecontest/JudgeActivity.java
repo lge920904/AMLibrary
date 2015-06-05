@@ -76,6 +76,7 @@ public class JudgeActivity extends ActionBarActivity implements View.OnClickList
     }
 
 
+    /* 액티비티를 종료하려고 할때 경품 안내를 해주는 다이얼로그 생성 */
     private AlertDialog lottoNumberAlertDialog() {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setMessage(CONTEST_MSG_CONFIRM_EXIT)

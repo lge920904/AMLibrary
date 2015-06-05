@@ -15,6 +15,8 @@ import java.io.OutputStream;
 class ImageManager {
     static final String DEFAULT_FILE_NAME = "giveangel_snapshot.png";
 
+    /* 갤러리에서 각 뷰를 선택해 사진을 전송,
+    뷰의 사진을 찍고 파일로 저장하는 함수 */
     public static String getImage(View view) {
         try {
             view.setDrawingCacheEnabled(true);
@@ -33,6 +35,7 @@ class ImageManager {
         }
     }
 
+    /* 전송 후 사진을 지우는 함수 */
     public static void deleteImage(String path) {
         File file = new File(path);
         file.delete();

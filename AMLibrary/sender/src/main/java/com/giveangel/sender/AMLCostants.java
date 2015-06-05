@@ -9,7 +9,6 @@ public class AMLCostants {
     public static final int CODE_KT_4G = 111;
     public static final int CODE_SKT = 222;
     public static final int CODE_LGU = 333;
-    public static final String GIVEANGEL_REPRESENT_NUMBER = "";
 
     // PARAMS
     public static final String KEY_CALLINGNUM = "callingnum";

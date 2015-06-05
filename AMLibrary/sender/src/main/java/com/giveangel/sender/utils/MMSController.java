@@ -22,6 +22,7 @@ public class MMSController extends Controller {
         super(context);
     }
 
+    /* MMS를 전송해도 되는(유효한{제휴된}) 앱인지 확인 */
     public String sendValidCheck(HashMap<Object, Object> params)
             throws JSONException,
             IOException {
@@ -38,6 +39,7 @@ public class MMSController extends Controller {
         return map.get(AMLCostants.KEY_RETURN_VALID_OK).toString();
     }
 
+    /* 전송 됬다는 사실을 통지 */
     public void informSentMMS(HashMap<Object, Object> params) throws JSONException,
             IOException {
         Log.i(MMSController.class.getSimpleName(), "in informSentMMS");
@@ -47,6 +49,7 @@ public class MMSController extends Controller {
         getStringFromUrl(url);
     }
 
+    /* 메세지를 보내야 하는 발신지의 번호를 받아옴 */
     public String getTargetNumber(HashMap<Object, Object> params) throws JSONException,
             IOException {
         Log.i(MMSController.class.getSimpleName(), "in getTargetNumber");
@@ -61,6 +64,7 @@ public class MMSController extends Controller {
         return map.get(AMLCostants.KEY_RETURN_TARGET_NUMBER).toString();
     }
 
+    /* URL정보를 저장하는 열거형 변수 */
     public static enum FUNCTION_LIST {
         valid_check("mms_stop.asp"), inform_sentmms("cont.asp"), get_targetnumber("callednum_check.asp");
         private String url;

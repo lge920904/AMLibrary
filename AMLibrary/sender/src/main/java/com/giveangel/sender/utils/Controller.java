@@ -25,14 +25,12 @@ abstract public class Controller {
     public static final String COLON = ":";
     public static final String URL_SEPARATOR = "/";
 
-    //    public static final String IP = "";
-//    public static final String PORT = "";
     public static final String CONTEXT = "hw" + URL_SEPARATOR + "photomms"
             + URL_SEPARATOR;
     public static final String DOMAIN = "http://85114.com";
     public static final String URL_ROOT = DOMAIN + URL_SEPARATOR
             + CONTEXT;
-    // result) http://DOMAIN/hw/photomms/
+    /* result) http://DOMAIN/hw/photomms/ */
 
     private Context context;
 
