@@ -1,1 +1,1 @@
-include ':app', ':sender', ':snapshotmms', ':imagecontest', ':adpublisher'
+include ':app', ':sender', ':snapshotmms', ':imagecontestmms', ':adpublisher'

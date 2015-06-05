@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.giveangel.amlibrary.imagecontest.InformationActivity;
+import com.giveangel.amlibrary.imagecontestmms.InformationActivity;
 import com.giveangel.amlibrary.snapshotmms.MessageSender;
 import com.giveangel.sender.AMLCostants;
 
