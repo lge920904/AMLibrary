@@ -37,8 +37,7 @@
         android:layout_height="340dp"
         android:layout_gravity="center"
         android:layout_margin="10dp"
-        android:layout_weight="2"
-        android:clickable="true" />
+        android:layout_weight="2" />
 
     <LinearLayout
         android:layout_width="wrap_content"
