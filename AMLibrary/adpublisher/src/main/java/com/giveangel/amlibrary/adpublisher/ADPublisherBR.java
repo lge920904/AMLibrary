@@ -90,7 +90,6 @@ public class ADPublisherBR extends BroadcastReceiver {
         public void run() {
             phoneNumber = bIntent.getExtras().getString(Intent.EXTRA_PHONE_NUMBER);
 
-
             /* 발신 번호로 주소록에 저장된 번호면 이름 찾아옴 */
             Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
             String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,6 +19,7 @@ public class CallOffADService extends Service {
     private ImageView callOffADImageView;
     final static String adImageRequestURL = "";
     private String adImageResponseURL;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -39,12 +39,12 @@ public class CallOffADService extends Service {
         });
         callOffADImageView = (ImageView) callOffView.findViewById(R.id.img_calloff_ad);
 
-        if(sendADImageRequestToServer()) {
+        if (sendADImageRequestToServer()) {
             Picasso.with(this)
                     .load(adImageResponseURL)
                     .fit().centerCrop()
                     .into(callOffADImageView);
-        }else{
+        } else {
             // 재요청
 
         }
@@ -60,7 +60,6 @@ public class CallOffADService extends Service {
         wm.addView(callOffView, params);
         return flags;
     }
-
 
 
     @Override

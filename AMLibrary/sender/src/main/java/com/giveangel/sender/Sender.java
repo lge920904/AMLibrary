@@ -11,6 +11,7 @@ import com.klinker.android.send_message.Message;
 import com.klinker.android.send_message.Settings;
 import com.klinker.android.send_message.Transaction;
 
+
 /**
  * Created by Kyungman on 2015-05-05.
  */
