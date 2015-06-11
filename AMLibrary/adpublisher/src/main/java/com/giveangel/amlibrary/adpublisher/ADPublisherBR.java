@@ -46,7 +46,7 @@ public class ADPublisherBR extends BroadcastReceiver {
                         /* 통화 종료하면 광고 뜨도록 */
                         isCallOffIdle = false;
                         if (isOutgoingCall)
-                            callActionHandler.postDelayed(runCallOffActivity, 00);
+                            callActionHandler.postDelayed(runCallOffActivity, 500);
                         setOutgoingCall(false);
                     }
                     break;
@@ -120,8 +120,8 @@ public class ADPublisherBR extends BroadcastReceiver {
 //            bIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //
 //            bContext.startActivity(bIntent);
-            Log.e(TAG,"통화종료 서비스 실행");
-            bContext.startService(new Intent(bContext,CallOffADService.class));
+            Log.e(TAG, "통화종료 서비스 실행");
+            bContext.startService(new Intent(bContext, CallOffADService.class));
         }
     };
 }

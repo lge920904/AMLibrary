@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -17,9 +18,11 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.android.internal.telephony.ITelephony;
+import com.giveangel.amlibrary.adpublisher.utils.ADManager;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 public class ADPublisherActivity extends Activity {
     private TextView receiverName;
@@ -38,6 +41,8 @@ public class ADPublisherActivity extends Activity {
     private AudioManager audioManager;
 
     private boolean MODE_SPEAKER;
+
+    private ADManager manager;
 
     private final BroadcastReceiver finishActionReceiver = new BroadcastReceiver() {
         @Override
@@ -107,49 +112,81 @@ public class ADPublisherActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adpublisher);
-        String phoneNumber = getIntent().getStringExtra("phoneNumber");
-        String displayName = getIntent().getStringExtra("displayName");
+        manager = new ADManager(this,
+                getApplicationInfo().loadLabel(getPackageManager()).toString());
+        CheckValidTask task = new CheckValidTask();
+        GetImageUrl getImageTask = new GetImageUrl();
+        try {
+            task.execute();
 
-        registerReceiver(finishActionReceiver, new IntentFilter("FINISH_ACTIVITY"));
-        telephony = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_adpublisher);
+            String phoneNumber = getIntent().getStringExtra("phoneNumber");
+            String displayName = getIntent().getStringExtra("displayName");
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+            registerReceiver(finishActionReceiver, new IntentFilter("FINISH_ACTIVITY"));
+            telephony = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 
-        receiverName = (TextView) findViewById(R.id.text_receiver_name);
-        receiverName.setText(displayName);
-        receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
-        receiverNumber.setText(phoneNumber);
-        adImage = (ImageView) findViewById(R.id.img_ad);
-        MODE_SPEAKER = false;
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                    | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                    | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-        if (sendADImageRequestToServer()) {
-            Picasso.with(this)
-                    .load(adImageUrl)
-                    .fit().centerCrop()
-                    .into(adImage);
-        } else {
-            // 서버로부터 이미지를 가져오지 못했을 때. (이미지가 null)
+            receiverName = (TextView) findViewById(R.id.text_receiver_name);
+            receiverName.setText(displayName);
+            receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
+            receiverNumber.setText(phoneNumber);
+            adImage = (ImageView) findViewById(R.id.img_ad);
+            MODE_SPEAKER = false;
+
+            speakerMode = (ToggleButton) findViewById(R.id.btn_speaker_mode);
+            callOff = (Button) findViewById(R.id.btn_call_off);
+            closeActivity = (Button) findViewById(R.id.btn_close_activity);
+
+            adImage.setOnClickListener(clickListener);
+            speakerMode.setOnClickListener(clickListener);
+            callOff.setOnClickListener(clickListener);
+            closeActivity.setOnClickListener(clickListener);
+
+            getImageTask.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        speakerMode = (ToggleButton) findViewById(R.id.btn_speaker_mode);
-        callOff = (Button) findViewById(R.id.btn_call_off);
-        closeActivity = (Button) findViewById(R.id.btn_close_activity);
-
-        adImage.setOnClickListener(clickListener);
-        speakerMode.setOnClickListener(clickListener);
-        callOff.setOnClickListener(clickListener);
-        closeActivity.setOnClickListener(clickListener);
     }
 
-    private boolean sendADImageRequestToServer() {
-        // request image to AD_IMAGE_REQUEST_URL;
-        adImageUrl = "http://image.genie.co.kr/Y/IMAGE/IMG_MUZICAT/IV2/Event/2015/5/19/ban_0_2015519144242.jpg";
-        adRequestUrl = "http://www.naver.com";
-        return true;
+    /* 유효성 체크 ASYNCTASK */
+    class CheckValidTask extends AsyncTask<Void, Void, Boolean> {
+        private String CODE = "f";
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            return manager.checkValidApp(CODE);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean flag) {
+            super.onPostExecute(flag);
+            if (flag) return;
+            else finish();
+        }
+    }
+
+    /* 유효성 체크 ASYNCTASK */
+    class GetImageUrl extends AsyncTask<Void, Void, Map<String, Object>> {
+        private String CODE = "f";
+
+        @Override
+        protected Map<String, Object> doInBackground(Void... voids) {
+            return manager.getImageUrl();
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, Object> map) {
+            Picasso.with(ADPublisherActivity.this)
+                    .load((String) map.get(CODE + "_img"))
+                    .fit().centerInside()
+                    .into(adImage);
+        }
     }
 
     @Override
