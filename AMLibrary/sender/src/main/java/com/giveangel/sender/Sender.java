@@ -18,7 +18,7 @@ import com.klinker.android.send_message.Transaction;
 class Sender {
     private static final String SEPARATOR_INIT = "#:";
     private static final String SEPARATOR_CONTENT = "*:";
-    //    private static final int LIBRARY_VERSION = 2; // 1 - send to me 2 - send to target
+//        private static final int LIBRARY_VERSION = 2; // 1 - send to me 2 - send to target
     private static final int LIBRARY_VERSION = 1; // 1 - send to me 2 - send to target
 
     private com.giveangel.sender.Settings defaultSetting;

@@ -52,6 +52,7 @@ public class ADController extends Controller {
             IOException {
         String functionURL = URL_CONTEST_AD + FUNCTION_LIST.last_insert.getUrl();
         String url = this.getUrl(functionURL, params);
+        System.out.println(url);
         String jsonValue = getStringFromUrl(url);
         System.out.println(url + jsonValue);
         return;

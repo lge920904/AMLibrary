@@ -3,9 +3,12 @@ package com.giveangel.amlibrary.adpublisher;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,6 +20,9 @@ import android.widget.ImageView;
 import com.giveangel.amlibrary.adpublisher.utils.ADManager;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,9 +42,11 @@ public class CallOffADService extends Service {
     private String adNumber;
     private String imgUrl;
     private String clickCheck;
-    private String mmsNumber;
+    private String buildedAddress;
 
     private ADManager manager;
+
+    private File viewSnapshot;
 
     @Override
     public void onCreate() {
@@ -54,7 +62,6 @@ public class CallOffADService extends Service {
         callOffView = View.inflate(this, R.layout.activity_call_off, null);
         callOffADImageView = (ImageView) callOffView.findViewById(R.id.img_calloff_ad);
         ClosingCallOffViewButton = (Button) callOffView.findViewById(R.id.btn_close_activity);
-        Log.i(getClass().getSimpleName(), "in service1");
 
         clickCheck = "n";
 
@@ -71,21 +78,25 @@ public class CallOffADService extends Service {
 
         callOffADImageView.setOnClickListener(new View.OnClickListener() {
             //@Override
+            private SendMMSTask task = null;
+
             public void onClick(View v) {
                 clickCheck = "y";
-                Log.v(getClass().getSimpleName(), " click");
                 if ("www".equals(clickType)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(clickUrl));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } else if ("mms".equals(clickType)) {
-                    Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                    String smsBody = "";
-                    sendIntent.putExtra("sms_body", smsBody); // 보낼 문자
-                    sendIntent.putExtra("address", mmsNumber); // 받는사람 번호
-                    sendIntent.setType("vnd.android-dir/mms-sms");
-                    sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(sendIntent);
+                    /* view to bitmap*/
+                    try {
+                        if (task == null) {
+                            task = new SendMMSTask();
+                            task.execute();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    onDestroy();
                 }
             }
         });
@@ -129,13 +140,22 @@ public class CallOffADService extends Service {
                 adNumber = (map.get("ad_number") != null) ? (String) map.get("ad_number") : "";
                 imgUrl = (map.get(CODE + "_img") != null) ? (String) map.get(CODE + "_img") :
                         "http://image.genie.co.kr/Y/IMAGE/IMG_MUZICAT/IV2/Event/2015/5/19/ban_0_2015519144242.jpg";
-                mmsNumber = (map.get("mms_number1") != null) ? (String) map.get("mms_number1") : "";
+                StringBuilder builder = new StringBuilder();
+                buildedAddress = "";
+                for (int i = 1; ; i++) {
+                    if (map.get("mms_number" + i) != null)
+                        builder.append(map.get("mms_number" + i)).append(";");
+                    else
+                        break;
+                }
+                builder.deleteCharAt(builder.length() - 1);
+                buildedAddress = builder.toString();
             } else {
                 clickType = "";
                 clickUrl = "";
                 adNumber = "";
                 imgUrl = "http://image.genie.co.kr/Y/IMAGE/IMG_MUZICAT/IV2/Event/2015/5/19/ban_0_2015519144242.jpg";
-                mmsNumber = "";
+                buildedAddress = "";
             }
             Log.i("test", clickType);
             return null;
@@ -170,6 +190,45 @@ public class CallOffADService extends Service {
         protected Void doInBackground(Void... voids) {
             manager.sendResultReport((adNumber.equals("")) ? 0 : Integer.parseInt(adNumber), clickCheck);
             return null;
+        }
+    }
+
+    private class SendMMSTask extends AsyncTask<Void, Void, Void> {
+        private Intent sendIntent;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                BitmapDrawable d = (BitmapDrawable) callOffADImageView.getDrawable();
+                Bitmap b = d.getBitmap();
+                String fileName = String.valueOf(System.currentTimeMillis());
+                viewSnapshot = new File(Environment.getExternalStorageDirectory(), "ad_" + fileName + ".png");
+                viewSnapshot.createNewFile();
+
+                OutputStream outStream = new FileOutputStream(viewSnapshot);
+                b.compress(Bitmap.CompressFormat.PNG, 30, outStream);
+
+                sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.putExtra("sms_body", ""); // 보낼 문자
+                sendIntent.putExtra("address", buildedAddress); // 받는사람 번호
+                sendIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(viewSnapshot));
+                sendIntent.setType("image/*");
+                sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                return null;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            try {
+                Log.i(getClass().getSimpleName(), "in asynctask = " + viewSnapshot.getPath());
+                startActivity(sendIntent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -30,9 +30,9 @@ public class MMSController extends Controller {
         Log.i(MMSController.class.getSimpleName(), "in sendValidCheck");
         String functionURL = URL_MMS + FUNCTION_LIST.valid_check.getUrl();
         String url = this.getUrl(functionURL, params);
-        System.out.println(url);
+//        System.out.println(url);
         String jsonValue = getStringFromUrl(url);
-        System.out.println("jsonvalue = " + jsonValue);
+//        System.out.println("jsonvalue = " + jsonValue);
         HashMap<String, Object> map = fromJSON(
                 new TypeReference<HashMap<String, Object>>() {
                 }, jsonValue);
@@ -45,7 +45,7 @@ public class MMSController extends Controller {
         Log.i(MMSController.class.getSimpleName(), "in informSentMMS");
         String functionURL = URL_MMS + FUNCTION_LIST.inform_sentmms.getUrl();
         String url = this.getUrl(functionURL, params);
-        System.out.println(url);
+//        System.out.println(url);
         getStringFromUrl(url);
     }
 
@@ -55,9 +55,9 @@ public class MMSController extends Controller {
         Log.i(MMSController.class.getSimpleName(), "in getTargetNumber");
         String functionURL = URL_MMS + FUNCTION_LIST.get_targetnumber.getUrl();
         String url = this.getUrl(functionURL, params);
-        System.out.println(url);
+//        System.out.println(url);
         String jsonValue = getStringFromUrl(url);
-        System.out.println("jsonvalue = " + jsonValue);
+//        System.out.println("jsonvalue = " + jsonValue);
         HashMap<String, Object> map = fromJSON(
                 new TypeReference<HashMap<String, Object>>() {
                 }, jsonValue);

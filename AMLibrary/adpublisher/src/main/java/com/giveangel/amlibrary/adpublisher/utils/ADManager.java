@@ -62,7 +62,7 @@ public class ADManager {
             params.put(AMLCostants.KEY_CALLINGNUM, Helper.getPhoneNumber(context));
             params.put(AMLCostants.KEY_AD_NUMBER, adNumber);
             params.put(AMLCostants.KEY_CLICK_CHECK, clickCheck);
-            params.put(AMLCostants.KEY_CALLINGNUM, AMLCostants.LIBRARY_VER);
+            params.put(AMLCostants.KEY_LIBRARY_VER, AMLCostants.LIBRARY_VER);
             controller.sendResultReport(params);
             return;
         } catch (Exception e) {

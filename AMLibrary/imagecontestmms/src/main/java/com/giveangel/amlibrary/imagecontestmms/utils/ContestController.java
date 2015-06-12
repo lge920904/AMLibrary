@@ -52,8 +52,8 @@ public class ContestController extends Controller {
         HashMap<Object, Object> map = fromJSON(
                 new TypeReference<HashMap<Object, Object>>() {
                 }, jsonValue);
-        System.out.println(url);
-        System.out.println("jsonvalue = " + jsonValue);
+//        System.out.println(url);
+//        System.out.println("jsonvalue = " + jsonValue);
         ArrayList<String> lottoNumberList = new ArrayList<>();
         if (map != null) {
             // lottonumber add
@@ -68,8 +68,8 @@ public class ContestController extends Controller {
         HashMap<Object, Object> map = fromJSON(
                 new TypeReference<HashMap<Object, Object>>() {
                 }, jsonValue);
-        System.out.println(url);
-        System.out.println("jsonvalue = " + jsonValue);
+//        System.out.println(url);
+//        System.out.println("jsonvalue = " + jsonValue);
         if (map != null)
             return map.get("url").toString();
         return "";
@@ -82,9 +82,9 @@ public class ContestController extends Controller {
         Log.i(this.getClass().getSimpleName(), "in getImageList");
         String functionURL = URL_CONTEST + FUNCTION_LIST.vote_img.getUrl();
         String url = this.getUrl(functionURL, params);
-        System.out.println(url);
+//        System.out.println(url);
         String jsonValue = getStringFromUrl(url);
-        System.out.println("jsonvalue = " + jsonValue);
+//        System.out.println("jsonvalue = " + jsonValue);
         HashMap<Object, Object> map = fromJSON(
                 new TypeReference<HashMap<Object, Object>>() {
                 }, jsonValue);
