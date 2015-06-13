@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.giveangel.amlibrary.adpublisher.utils.ADManager;
+import com.giveangel.amlibrary.adpublisher.utils.NetworkManager;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -47,7 +48,7 @@ public class CallOffADService extends Service {
     private ADManager manager;
 
     private File viewSnapshot;
-
+    private boolean initFlag;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -55,51 +56,52 @@ public class CallOffADService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(! NetworkManager.checkNetwork(getApplicationContext())) stopSelf();
+        else {
+            manager = new ADManager(CallOffADService.this,
+                    getApplicationInfo().loadLabel(getPackageManager()).toString());
+            callOffView = new View(this);
+            callOffView = View.inflate(this, R.layout.activity_call_off, null);
+            callOffADImageView = (ImageView) callOffView.findViewById(R.id.img_calloff_ad);
+            ClosingCallOffViewButton = (Button) callOffView.findViewById(R.id.btn_close_activity);
+            clickCheck = "n";
 
-        manager = new ADManager(CallOffADService.this,
-                getApplicationInfo().loadLabel(getPackageManager()).toString());
-        callOffView = new View(this);
-        callOffView = View.inflate(this, R.layout.activity_call_off, null);
-        callOffADImageView = (ImageView) callOffView.findViewById(R.id.img_calloff_ad);
-        ClosingCallOffViewButton = (Button) callOffView.findViewById(R.id.btn_close_activity);
+            SetImageTask task = new SetImageTask();
+            task.execute();
 
-        clickCheck = "n";
-
-        SetImageTask task = new SetImageTask();
-        task.execute();
-
-        ClosingCallOffViewButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                onDestroy();
-                return true;
-            }
-        });
-
-        callOffADImageView.setOnClickListener(new View.OnClickListener() {
-            //@Override
-            private SendMMSTask task = null;
-
-            public void onClick(View v) {
-                clickCheck = "y";
-                if ("www".equals(clickType)) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(clickUrl));
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else if ("mms".equals(clickType)) {
-                    /* view to bitmap*/
-                    try {
-                        if (task == null) {
-                            task = new SendMMSTask();
-                            task.execute();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            ClosingCallOffViewButton.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
                     onDestroy();
+                    return true;
                 }
-            }
-        });
+            });
+
+            callOffADImageView.setOnClickListener(new View.OnClickListener() {
+                //@Override
+                private SendMMSTask task = null;
+
+                public void onClick(View v) {
+                    clickCheck = "y";
+                    if ("www".equals(clickType)) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(clickUrl));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } else if ("mms".equals(clickType)) {
+                    /* view to bitmap*/
+                        try {
+                            if (task == null) {
+                                task = new SendMMSTask();
+                                task.execute();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        onDestroy();
+                    }
+                }
+            });
+        }
         return flags;
     }
 
@@ -112,11 +114,14 @@ public class CallOffADService extends Service {
 
     @Override
     public void onDestroy() {
-        if (callOffView.isShown()) {
+        if (callOffView != null && callOffView.isShown()) {
             ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(callOffView);
         }
-        SendResultReportTask task = new SendResultReportTask();
-        task.execute();
+        // 끝까지 생성되었던 경우에만
+        if(initFlag) {
+            SendResultReportTask task = new SendResultReportTask();
+            task.execute();
+        }
         super.onDestroy();
     }
 
@@ -157,7 +162,6 @@ public class CallOffADService extends Service {
                 imgUrl = "http://image.genie.co.kr/Y/IMAGE/IMG_MUZICAT/IV2/Event/2015/5/19/ban_0_2015519144242.jpg";
                 buildedAddress = "";
             }
-            Log.i("test", clickType);
             return null;
         }
 
@@ -174,6 +178,8 @@ public class CallOffADService extends Service {
 
             WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE); //윈도 매니저
             wm.addView(callOffView, params);
+            // 끝까지 생성하는데 성공
+            initFlag = true;
             TimerTask timerTask = new TimerTask() {
                 @Override
                 public void run() {

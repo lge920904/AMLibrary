@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +18,7 @@ import android.widget.ToggleButton;
 
 import com.android.internal.telephony.ITelephony;
 import com.giveangel.amlibrary.adpublisher.utils.ADManager;
+import com.giveangel.amlibrary.adpublisher.utils.NetworkManager;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Method;
@@ -107,50 +107,55 @@ public class ADPublisherActivity extends Activity {
 
     private void closeActivity() {
         /* 화면닫기 */
+        Log.i(getClass().getSimpleName(), "close activity");
         this.finish();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        manager = new ADManager(this,
-                getApplicationInfo().loadLabel(getPackageManager()).toString());
-        CheckValidTask task = new CheckValidTask();
-        GetImageUrl getImageTask = new GetImageUrl();
-        try {
-            task.execute();
+        super.onCreate(savedInstanceState);
+//        registerReceiver(finishActionReceiver, new IntentFilter("FINISH_ACTIVITY"));
+        if(! NetworkManager.checkNetwork(getApplicationContext())) closeActivity();
+        else {
+            manager = new ADManager(this,
+                    getApplicationInfo().loadLabel(getPackageManager()).toString());
+            CheckValidTask task = new CheckValidTask();
+            GetImageUrl getImageTask = new GetImageUrl();
+            try {
+                task.execute();
 
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_adpublisher);
-            String phoneNumber = getIntent().getStringExtra("phoneNumber");
-            String displayName = getIntent().getStringExtra("displayName");
+                setContentView(R.layout.activity_adpublisher);
+                String phoneNumber = getIntent().getStringExtra("phoneNumber");
+                String displayName = getIntent().getStringExtra("displayName");
 
-            registerReceiver(finishActionReceiver, new IntentFilter("FINISH_ACTIVITY"));
-            telephony = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                    | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                    | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                telephony = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
 
-            receiverName = (TextView) findViewById(R.id.text_receiver_name);
-            receiverName.setText(displayName);
-            receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
-            receiverNumber.setText(phoneNumber);
-            adImage = (ImageView) findViewById(R.id.img_ad);
-            MODE_SPEAKER = false;
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-            speakerMode = (ToggleButton) findViewById(R.id.btn_speaker_mode);
-            callOff = (Button) findViewById(R.id.btn_call_off);
-            closeActivity = (Button) findViewById(R.id.btn_close_activity);
+                receiverName = (TextView) findViewById(R.id.text_receiver_name);
+                receiverName.setText(displayName);
+                receiverNumber = (TextView) findViewById(R.id.text_receiver_number);
+                receiverNumber.setText(phoneNumber);
+                adImage = (ImageView) findViewById(R.id.img_ad);
+                MODE_SPEAKER = false;
 
-            adImage.setOnClickListener(clickListener);
-            speakerMode.setOnClickListener(clickListener);
-            callOff.setOnClickListener(clickListener);
-            closeActivity.setOnClickListener(clickListener);
+                speakerMode = (ToggleButton) findViewById(R.id.btn_speaker_mode);
+                callOff = (Button) findViewById(R.id.btn_call_off);
+                closeActivity = (Button) findViewById(R.id.btn_close_activity);
 
-            getImageTask.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
+                adImage.setOnClickListener(clickListener);
+                speakerMode.setOnClickListener(clickListener);
+                callOff.setOnClickListener(clickListener);
+                closeActivity.setOnClickListener(clickListener);
+
+                getImageTask.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -192,6 +197,6 @@ public class ADPublisherActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(finishActionReceiver);
+//        unregisterReceiver(finishActionReceiver);
     }
 }
