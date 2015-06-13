@@ -49,6 +49,7 @@ public class CallOffADService extends Service {
 
     private File viewSnapshot;
     private boolean initFlag;
+    private boolean sendReportFlag;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -118,7 +119,9 @@ public class CallOffADService extends Service {
             ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).removeView(callOffView);
         }
         // 끝까지 생성되었던 경우에만
-        if(initFlag) {
+        if(initFlag && !sendReportFlag) {
+            Log.i(getClass().getSimpleName(), "Call OnDestroy on task");
+            sendReportFlag = true;
             SendResultReportTask task = new SendResultReportTask();
             task.execute();
         }

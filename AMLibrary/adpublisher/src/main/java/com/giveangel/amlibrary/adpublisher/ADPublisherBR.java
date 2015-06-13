@@ -11,6 +11,8 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.giveangel.amlibrary.adpublisher.utils.NetworkManager;
+
 public class ADPublisherBR extends BroadcastReceiver {
     private final static String TAG = "ABPublisherBR";
     private Context bContext;
@@ -88,6 +90,7 @@ public class ADPublisherBR extends BroadcastReceiver {
     private Runnable runRingingActivity = new Runnable() {
         @Override
         public void run() {
+            if(!NetworkManager.checkNetwork(bContext)) return;
             phoneNumber = bIntent.getExtras().getString(Intent.EXTRA_PHONE_NUMBER);
 
             /* 발신 번호로 주소록에 저장된 번호면 이름 찾아옴 */
@@ -121,7 +124,8 @@ public class ADPublisherBR extends BroadcastReceiver {
 //
 //            bContext.startActivity(bIntent);
             Log.e(TAG, "통화종료 서비스 실행");
-            bContext.startService(new Intent(bContext, CallOffADService.class));
+            if (NetworkManager.checkNetwork(bContext))
+                bContext.startService(new Intent(bContext, CallOffADService.class));
         }
     };
 }

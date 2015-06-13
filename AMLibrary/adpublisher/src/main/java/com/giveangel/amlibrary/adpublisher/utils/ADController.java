@@ -54,7 +54,6 @@ public class ADController extends Controller {
         String url = this.getUrl(functionURL, params);
         System.out.println(url);
         String jsonValue = getStringFromUrl(url);
-        System.out.println(url + jsonValue);
         return;
     }
 
