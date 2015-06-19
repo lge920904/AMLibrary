@@ -64,6 +64,8 @@ public class MessageSender implements Runnable {
             if (messageType == TYPE_SHOT_SINGLE) {
                 Sender sender = new Sender(activity, imgPath, message);
                 sender.initTargetNumber(targetNumber);
+                if(callback != null)
+                    sender.setMessageCallback(callback);
                 sender.run();
                 this.sentMessageCount = 1;
             } else if (messageType == TYPE_SHOT_MULTIPLE) {
@@ -119,6 +121,15 @@ public class MessageSender implements Runnable {
             e.printStackTrace();
             return false;
         }
+    }
+    private SentMessageCallback callback;
+    public interface SentMessageCallback {
+        public void successMessageCallback();
+        public void failMessageCallback();
+    }
+
+    public void setCallback(SentMessageCallback callback){
+        this.callback = callback;
     }
 
     public Activity getActivity() {

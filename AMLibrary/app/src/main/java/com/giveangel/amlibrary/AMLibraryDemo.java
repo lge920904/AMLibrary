@@ -48,6 +48,16 @@ public class AMLibraryDemo extends Activity {
 
     private void sendMMS() {
         MessageSender sender = new MessageSender(AMLibraryDemo.this, "test");
+        sender.setCallback(new com.giveangel.sender.MessageSender.SentMessageCallback() {
+            @Override
+            public void successMessageCallback() {
+                System.out.println("Calling successMessageCallback");
+            }
+            @Override
+            public void failMessageCallback() {
+
+            }
+        });
         sender.sendMessage("test");
     }
 

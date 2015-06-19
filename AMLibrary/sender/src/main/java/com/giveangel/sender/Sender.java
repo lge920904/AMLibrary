@@ -18,7 +18,7 @@ import com.klinker.android.send_message.Transaction;
 class Sender {
     private static final String SEPARATOR_INIT = "#:";
     private static final String SEPARATOR_CONTENT = "*:";
-//        private static final int LIBRARY_VERSION = 2; // 1 - send to me 2 - send to target
+    //        private static final int LIBRARY_VERSION = 2; // 1 - send to me 2 - send to target
     private static final int LIBRARY_VERSION = 1; // 1 - send to me 2 - send to target
 
     private com.giveangel.sender.Settings defaultSetting;
@@ -32,6 +32,11 @@ class Sender {
 
     // variables
     private Bitmap sendImg;
+    private MessageSender.SentMessageCallback callback;
+
+    public void setMessageCallback(MessageSender.SentMessageCallback callback) {
+        this.callback = callback;
+    }
 
     public Sender(Activity context, String imgPath, String message) {
         this.context = context;
@@ -141,6 +146,7 @@ class Sender {
             settings.setProxy(apn.MMSProxy);
         }
         settings.setPort(apn.MMSPort);
+        settings.setDeliveryReports(true);
         return settings;
     }
 
@@ -174,7 +180,11 @@ class Sender {
         Message msg = this.generateMessage(SEPARATOR_CONTENT);
 
         sendTransaction.sendNewMessage(initMsg, Transaction.NO_THREAD_ID);
-        sendTransaction.sendNewMessage(msg, Transaction.NO_THREAD_ID);
+        if (callback != null)
+            sendTransaction.sendNewMessage(msg, Transaction.NO_THREAD_ID, callback);
+        else
+            sendTransaction.sendNewMessage(msg, Transaction.NO_THREAD_ID);
+
         Log.i(getClass().getSimpleName(), "SENDMSG ADD = "
                 + targetNumber + " MMSC = " + setting.getMmsc() + " MMSP = "
                 + setting.getProxy() + " MMSPort = " + setting.getPort());

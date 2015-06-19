@@ -16,17 +16,23 @@
 
 package com.android.mms.service;
 
-import android.net.*;
-import com.android.mms.service.exception.ApnException;
-import com.android.mms.service.exception.MmsHttpException;
-import com.android.mms.service.exception.MmsNetworkException;
-
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.net.NetworkUtilsHelper;
+import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+
+import com.android.mms.service.exception.ApnException;
+import com.android.mms.service.exception.MmsHttpException;
+import com.android.mms.service.exception.MmsNetworkException;
+import com.giveangel.sender.MessageSender;
 import com.klinker.android.logger.Log;
 import com.klinker.android.send_message.Utils;
 
@@ -146,7 +152,74 @@ public abstract class MmsRequest {
                     response = doHttp(context, networkManager, apn);
                     result = Activity.RESULT_OK;
                     networkManager.releaseNetwork();
-                    Log.v(TAG, "MmsRequest: Success! Releasing request");
+                    Log.i(TAG, "MmsRequest: Success! Releasing request");
+                    System.out.println(TAG + "MmsRequest: Success! Releasing request");
+                    // Success
+                    break;
+                } catch (ApnException e) {
+                    Log.e(TAG, "MmsRequest: APN failure", e);
+                    result = SmsManager.MMS_ERROR_INVALID_APN;
+                    break;
+                } catch (MmsNetworkException e) {
+                    Log.e(TAG, "MmsRequest: MMS network acquiring failure", e);
+                    result = SmsManager.MMS_ERROR_UNABLE_CONNECT_MMS;
+                    // Retry
+                } catch (MmsHttpException e) {
+                    Log.e(TAG, "MmsRequest: HTTP or network I/O failure", e);
+                    result = SmsManager.MMS_ERROR_HTTP_FAILURE;
+                    // Retry
+                } catch (Exception e) {
+                    Log.e(TAG, "MmsRequest: unexpected failure", e);
+                    result = SmsManager.MMS_ERROR_UNSPECIFIED;
+                    break;
+                }
+                try {
+                    Thread.sleep(retryDelaySecs * 1000, 0/*nano*/);
+                } catch (InterruptedException e) {}
+                retryDelaySecs <<= 1;
+            }
+        }
+
+        if (!mobileDataEnabled) {
+            Log.v(TAG, "setting mobile data back to disabled");
+            Utils.setMobileDataEnabled(context, false);
+        }
+
+        processResult(context, result, response);
+    }
+
+    public void execute(Context context, MmsNetworkManager networkManager, MessageSender.SentMessageCallback callback) {
+        mobileDataEnabled = Utils.isMobileDataEnabled(context);
+        Log.v(TAG, "mobile data enabled: " + mobileDataEnabled);
+
+        if (!mobileDataEnabled) {
+            Log.v(TAG, "mobile data not enabled, so forcing it to enable");
+            Utils.setMobileDataEnabled(context, true);
+        }
+
+        int result = SmsManager.MMS_ERROR_UNSPECIFIED;
+        byte[] response = null;
+        if (!ensureMmsConfigLoaded(context)) { // Check mms config
+            Log.e(TAG, "MmsRequest: mms config is not loaded yet");
+            result = SmsManager.MMS_ERROR_CONFIGURATION_ERROR;
+        } else if (!prepareForHttpRequest(context)) { // Prepare request, like reading pdu data from user
+            Log.e(TAG, "MmsRequest: failed to prepare for request");
+            result = SmsManager.MMS_ERROR_IO_ERROR;
+        } else { // Execute
+            long retryDelaySecs = 2;
+            // Try multiple times of MMS HTTP request
+            for (int i = 0; i < RETRY_TIMES; i++) {
+                try {
+                    networkManager.acquireNetwork();
+                    networkManager.acquireNetwork();
+                    final ApnSettings apn = ApnSettings.load(context, null/*apnName*/);
+                    Log.v(TAG, "MmsRequest: apns: " + apn);
+                    response = doHttp(context, networkManager, apn);
+                    result = Activity.RESULT_OK;
+                    networkManager.releaseNetwork();
+                    Log.i(TAG, "MmsRequest: Success! Releasing request");
+                    System.out.println(TAG + "MmsRequest: Success! Releasing request");
+                    callback.successMessageCallback();
                     // Success
                     break;
                 } catch (ApnException e) {

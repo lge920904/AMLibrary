@@ -18,7 +18,11 @@ package com.klinker.android.send_message;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
@@ -33,28 +37,46 @@ import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.widget.Toast;
+
+import com.android.mms.dom.smil.parser.SmilXmlSerializer;
 import com.android.mms.service.MmsNetworkManager;
 import com.android.mms.service.SendRequest;
-import com.klinker.android.logger.Log;
-import android.widget.Toast;
-import com.android.mms.dom.smil.parser.SmilXmlSerializer;
 import com.android.mms.transaction.HttpUtils;
 import com.android.mms.transaction.MmsMessageSender;
 import com.android.mms.transaction.ProgressCallbackEntity;
 import com.android.mms.util.DownloadManager;
 import com.android.mms.util.RateController;
-import com.google.android.mms.*;
-import com.google.android.mms.pdu_alt.*;
+import com.giveangel.sender.MessageSender;
+import com.google.android.mms.APN;
+import com.google.android.mms.APNHelper;
+import com.google.android.mms.ContentType;
+import com.google.android.mms.MMSPart;
+import com.google.android.mms.MmsException;
+import com.google.android.mms.pdu_alt.CharacterSets;
+import com.google.android.mms.pdu_alt.EncodedStringValue;
+import com.google.android.mms.pdu_alt.PduBody;
+import com.google.android.mms.pdu_alt.PduComposer;
+import com.google.android.mms.pdu_alt.PduPart;
+import com.google.android.mms.pdu_alt.PduPersister;
+import com.google.android.mms.pdu_alt.SendReq;
 import com.google.android.mms.smil.SmilHelper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.klinker.android.logger.Log;
 import com.koushikdutta.ion.Ion;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -150,7 +172,38 @@ public class Transaction {
         }
 
     }
+    public void sendNewMessage(Message message, long threadId, MessageSender.SentMessageCallback callback) {
+        this.saveMessage = message.getSave();
 
+        // if message:
+        //      1) Has images attached
+        // or
+        //      1) is enabled to send long messages as mms
+        //      2) number of pages for that sms exceeds value stored in settings for when to send the mms by
+        //      3) prefer voice is disabled
+        // or
+        //      1) more than one address is attached
+        //      2) group messaging is enabled
+        //
+        // then, send as MMS, else send as Voice or SMS
+        if (checkMMS(message)) {
+            try { Looper.prepare(); } catch (Exception e) { }
+            RateController.init(context);
+            DownloadManager.init(context);
+            sendMmsMessage(message.getText(), message.getAddresses(), message.getImages(),
+                    message.getImageNames(), message.getParts(), message.getSubject(), callback);
+        } else {
+            if (message.getType() == Message.TYPE_VOICE) {
+                sendVoiceMessage(message.getText(), message.getAddresses(), threadId);
+            } else if (message.getType() == Message.TYPE_SMSMMS) {
+                Log.v("send_transaction", "sending sms");
+                sendSmsMessage(message.getText(), message.getAddresses(), threadId, message.getDelay());
+            } else {
+                Log.v("send_transaction", "error with message type, aborting...");
+            }
+        }
+
+    }
     private void sendSmsMessage(String text, String[] addresses, long threadId, int delay) {
         Log.v("send_transaction", "message text: " + text);
         Uri messageUri = null;
@@ -312,7 +365,8 @@ public class Transaction {
         }
     }
 
-    private void sendMmsMessage(String text, String[] addresses, Bitmap[] image, String[] imageNames, List<Message.Part> parts, String subject) {
+    private void sendMmsMessage(String text, String[] addresses,
+                                Bitmap[] image, String[] imageNames, List<Message.Part> parts, String subject) {
         // merge the string[] of addresses into a single string so they can be inserted into the database easier
         String address = "";
 
@@ -421,6 +475,122 @@ public class Transaction {
             SendRequest request = new SendRequest(info.location, info.location, null, null, null, null, info.bytes);
             MmsNetworkManager manager = new MmsNetworkManager(context);
             request.execute(context, manager);
+        }
+    }
+
+
+    private void sendMmsMessage(String text, String[] addresses, Bitmap[] image,
+                                String[] imageNames, List<Message.Part> parts, String subject,
+                                MessageSender.SentMessageCallback callback) {
+        // merge the string[] of addresses into a single string so they can be inserted into the database easier
+        String address = "";
+
+        for (int i = 0; i < addresses.length; i++) {
+            address += addresses[i] + " ";
+        }
+
+        address = address.trim();
+
+        // create the parts to send
+        ArrayList<MMSPart> data = new ArrayList<MMSPart>();
+
+        for (int i = 0; i < image.length; i++) {
+            // turn bitmap into byte array to be stored
+            byte[] imageBytes = Message.bitmapToByteArray(image[i]);
+
+            MMSPart part = new MMSPart();
+            part.MimeType = "image/jpeg";
+            part.Name = (imageNames != null) ? imageNames[i] : ("image" + i);
+            part.Data = imageBytes;
+            data.add(part);
+        }
+
+        // add any extra media according to their mimeType set in the message
+        //      eg. videos, audio, contact cards, location maybe?
+        if (parts != null) {
+            for (Message.Part p : parts) {
+                MMSPart part = new MMSPart();
+                if (p.getName() != null) {
+                    part.Name = p.getName();
+                } else {
+                    part.Name = p.getContentType().split("/")[0];
+                }
+                part.MimeType = p.getContentType();
+                part.Data = p.getMedia();
+                data.add(part);
+            }
+        }
+
+        if (!text.equals("")) {
+            // add text to the end of the part and send
+            MMSPart part = new MMSPart();
+            part.Name = "text";
+            part.MimeType = "text/plain";
+            part.Data = text.getBytes();
+            data.add(part);
+        }
+
+        MessageInfo info;
+
+        try {
+            info = getBytes(context, saveMessage, address.split(" "), data.toArray(new MMSPart[data.size()]), subject);
+        } catch (MmsException e) {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
+            try {
+                MmsMessageSender sender = new MmsMessageSender(context, info.location, info.bytes.length);
+                sender.sendMessage(info.token);
+
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(ProgressCallbackEntity.PROGRESS_STATUS_ACTION);
+                BroadcastReceiver receiver = new BroadcastReceiver() {
+
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        int progress = intent.getIntExtra("progress", -3);
+                        Log.v("sending_mms_library", "progress: " + progress);
+
+                        // send progress broadcast to update ui if desired...
+                        Intent progressIntent = new Intent(MMS_PROGRESS);
+                        progressIntent.putExtra("progress", progress);
+                        context.sendBroadcast(progressIntent);
+
+                        if (progress == ProgressCallbackEntity.PROGRESS_COMPLETE) {
+                            context.sendBroadcast(new Intent(REFRESH));
+
+                            try {
+                                context.unregisterReceiver(this);
+                            } catch (Exception e) {
+                                // TODO fix me
+                                // receiver is not registered force close error... hmm.
+                            }
+                        } else if (progress == ProgressCallbackEntity.PROGRESS_ABORT) {
+                            // This seems to get called only after the progress has reached 100 and then something else goes wrong, so here we will try and send again and see if it works
+                            Log.v("sending_mms_library", "sending aborted for some reason...");
+                        }
+                    }
+
+                };
+
+                context.registerReceiver(receiver, filter);
+            } catch (Throwable e) {
+                Log.e(TAG, "exception thrown", e);
+                // insert the pdu into the database and return the bytes to send
+                if (settings.getWifiMmsFix()) {
+                    sendMMS(info.bytes);
+                } else {
+                    sendMMSWiFi(info.bytes);
+                }
+            }
+        } else {
+            Log.v(TAG, "using lollipop method for sending sms");
+            SendRequest request = new SendRequest(info.location, info.location, null, null, null, null, info.bytes);
+            MmsNetworkManager manager = new MmsNetworkManager(context);
+            request.execute(context, manager, callback);
+//            request.execute(context, manager);
         }
     }
 

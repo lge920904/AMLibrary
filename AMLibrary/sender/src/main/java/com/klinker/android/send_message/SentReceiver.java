@@ -30,7 +30,8 @@ public class SentReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.v("sent_receiver", "marking message as sent");
+        Log.i("sent_receiver", "marking message as sent");
+        System.out.println("리시브함");
         Uri uri;
 
         try {

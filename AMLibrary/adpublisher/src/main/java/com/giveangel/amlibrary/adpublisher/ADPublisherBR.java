@@ -15,12 +15,15 @@ import com.giveangel.amlibrary.adpublisher.utils.NetworkManager;
 
 public class ADPublisherBR extends BroadcastReceiver {
     private final static String TAG = "ABPublisherBR";
+    private final static int DELAY_START = 1000;
+    private final static int DELAY_END = 800;
     private Context bContext;
     private Intent bIntent;
     private String displayName;
     private String phoneNumber;
     private String action;
     private boolean isCallOffIdle = false;
+
     private TelephonyManager telephony;
 
     /* 브로드 캐스트 생길때마다 계속 생성하고 붙이는 작업을 계속하고있었음.
@@ -48,7 +51,7 @@ public class ADPublisherBR extends BroadcastReceiver {
                         /* 통화 종료하면 광고 뜨도록 */
                         isCallOffIdle = false;
                         if (isOutgoingCall)
-                            callActionHandler.postDelayed(runCallOffActivity, 500);
+                            callActionHandler.postDelayed(runCallOffActivity, DELAY_END);
                         setOutgoingCall(false);
                     }
                     break;
@@ -77,7 +80,7 @@ public class ADPublisherBR extends BroadcastReceiver {
 
         /* 통화 걸 때 */
         if (action.equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
-            callActionHandler.postDelayed(runRingingActivity, 500);
+            callActionHandler.postDelayed(runRingingActivity, DELAY_START);
             phoneListener.setOutgoingCall(true);
         }
         /* set Listener - onReceive
